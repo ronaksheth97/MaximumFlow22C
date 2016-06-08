@@ -96,12 +96,27 @@ public class Executable {
 					return;
 				}
 
-				System.out.println(cityF + " to " + cityT + " with max flow of " + maxFlow); // Temp to test values returned
+				System.out.println(cityF + " to " + cityT + " with max flow of " + maxFlow + " added"); // Temp to test values returned
+				subMenu.dispose();
+			}
+		});
+		
+		remove.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String cityF = vertex1.getText();
+				String cityT = vertex2.getText();
+
+				System.out.println(cityF + " to " + cityT + " removed"); // Temp to test values returned
 				subMenu.dispose();
 			}
 		});
 		// frame.setVisible(true);
 		subMenu.setVisible(true);
 
+	}
+	
+	public void openReadFromFile(){
+		
 	}
 }
