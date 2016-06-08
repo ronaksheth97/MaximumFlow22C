@@ -17,6 +17,8 @@ import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ApplicationGUI {
 
@@ -54,6 +56,10 @@ public class ApplicationGUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JButton btnReadFromFile = new JButton("Read From File");
+		btnReadFromFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		
 		JButton btnAddremoveEdge = new JButton("Add/Remove Edge");
 		btnAddremoveEdge.addMouseListener(new MouseAdapter() {

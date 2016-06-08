@@ -1,0 +1,65 @@
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+
+public class Main {
+	
+	private static JFrame frame;
+	static JButton btnReadFromFile = new JButton("Read From File");
+	static JButton btnAddremoveEdge = new JButton("Add/Remove Edge");
+	static JButton btnDrawGraph = new JButton("Draw Graph");
+	static JButton btnGetMaximumFlow = new JButton("Get Maximum Flow");
+	static JButton btnUndoRemoval = new JButton("Undo Removal");
+	static JButton btnExit = new JButton("Exit");
+	static JLabel  menuTitle = new JLabel("Maximum Flow Problem");
+	
+	
+	
+	public static void main(String[] args){
+		frame = new JFrame();
+		frame.setSize(200, 230);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Container c = frame.getContentPane();
+		c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
+		c.add("Title", menuTitle);
+		c.add("ReadFile", btnReadFromFile);
+		c.add("AddRemove", btnAddremoveEdge);
+		c.add("DrawGraph", btnDrawGraph);
+		c.add("GetMax", btnGetMaximumFlow);
+		c.add("Undo", btnUndoRemoval);
+		c.add("Exit", btnExit);
+		
+		btnAddremoveEdge.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				openAddRemoveMenu();
+			}
+		});
+		frame.setVisible(true);
+	}
+	
+	public static void openAddRemoveMenu(){
+		JFrame subMenu = new JFrame();
+		subMenu.setSize(200, 230);
+		subMenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		Container c = subMenu.getContentPane();
+		c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
+		
+		JTextField vertex1 = new JTextField("City From");
+		JTextField vertex2 = new JTextField("City To");
+		JTextField cap = new JTextField("Capacity");
+		JButton add = new JButton("Add");
+		JButton remove = new JButton("Remove");
+		
+		c.add(vertex1);
+		c.add(vertex2);
+		c.add(cap);
+		c.add(add);
+		c.add(remove);
+		
+		subMenu.setVisible(true);
+		
+		
+	}
+}
