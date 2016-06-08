@@ -13,7 +13,7 @@ public class Executable {
 	private JButton btnGetMaximumFlow = new JButton("Get Maximum Flow");
 	private JButton btnUndoRemoval = new JButton("Undo Removal");
 	private JButton btnExit = new JButton("Exit");
-	private JLabel menuTitle = new JLabel("Maximum Flow Problem");
+	private JLabel menuTitle = new JLabel("       Maximum Flow Problem");
 
 	public Executable() {
 		init();
@@ -34,6 +34,16 @@ public class Executable {
 		c.add("Undo", btnUndoRemoval);
 		c.add("Exit", btnExit);
 
+		// Click Read From File Button
+		btnReadFromFile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				JOptionPane getInputFile = new JOptionPane();
+				String fileName = getInputFile.showInputDialog("Please enter filename");
+				System.out.println(fileName); // Temp to ensure it works
+			}
+		});
+		
 		// Click Add/Remove Button
 		btnAddremoveEdge.addActionListener(new ActionListener() {
 			@Override
@@ -41,10 +51,27 @@ public class Executable {
 				openAddRemoveMenu(); // Open sub-menu
 			}
 		});
+		
+		// Click Draw Graph Button
+		btnDrawGraph.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				// Draw Graph
+			}
+		});
+		
+		// Click Get Maximum Flow Button
+		btnGetMaximumFlow.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				// openGetMFlowMenu();
+			}
+		});
+		
 		// Click Exit Button
 		btnExit.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent ev) {
+			public void actionPerformed(ActionEvent e) {
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)); // Close window
 			}
 		});
@@ -84,14 +111,9 @@ public class Executable {
 					maxFlow = Integer.parseInt(maxF);
 				} catch (Exception inv) { // If unable to parse input as int,
 											// close window and return
-					JFrame err = new JFrame();
-
-					JLabel errMsg = new JLabel("     Invalid input, not added", 2);
-					err.setSize(200, 100); // Dimensions
-					err.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-					err.setLocationRelativeTo(null); // Center
-					err.add(errMsg);
-					err.setVisible(true);
+					Object[] options = {"OK"};
+					JOptionPane.showOptionDialog(null, "Invalid capacity, unable to add", "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+					//err.setVisible(true);
 					subMenu.dispose(); // Close Add/Remove Window
 					return;
 				}
