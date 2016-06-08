@@ -21,13 +21,13 @@ public class Executable {
 
 	private void init() {
 		frame = new JFrame();
-		frame.setSize(200, 230);
+		frame.setSize(200, 230); // Window Dimensions
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
+		frame.setLocationRelativeTo(null); // Center Window
 		Container c = frame.getContentPane();
-		c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
+		c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS)); // Layout of Panel
 		c.add("Title", menuTitle);
-		c.add("ReadFile", btnReadFromFile);
+		c.add("ReadFile", btnReadFromFile); // Add all Buttons + Title For Main screen
 		c.add("AddRemove", btnAddremoveEdge);
 		c.add("DrawGraph", btnDrawGraph);
 		c.add("GetMax", btnGetMaximumFlow);
@@ -38,14 +38,14 @@ public class Executable {
 		btnAddremoveEdge.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				openAddRemoveMenu();
+				openAddRemoveMenu(); // Open sub-menu
 			}
 		});
 		// Click Exit Button
 		btnExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)); // Close window
 			}
 		});
 
@@ -55,11 +55,11 @@ public class Executable {
 	// Sub-Menu for Add/Remove Button
 	private void openAddRemoveMenu() {
 		final JFrame subMenu = new JFrame();
-		subMenu.setSize(200, 230);
+		subMenu.setSize(200, 230); // Dimensions
 		subMenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		subMenu.setLocationRelativeTo(null);
+		subMenu.setLocationRelativeTo(null); // Center
 		Container c = subMenu.getContentPane();
-		c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
+		c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS)); // Panel Layout
 
 		final JTextField vertex1 = new JTextField("City From");
 		final JTextField vertex2 = new JTextField("City To");
@@ -87,16 +87,16 @@ public class Executable {
 					JFrame err = new JFrame();
 
 					JLabel errMsg = new JLabel("     Invalid input, not added", 2);
-					err.setSize(200, 100);
+					err.setSize(200, 100); // Dimensions
 					err.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-					err.setLocationRelativeTo(null);
+					err.setLocationRelativeTo(null); // Center
 					err.add(errMsg);
 					err.setVisible(true);
-					subMenu.dispose();
+					subMenu.dispose(); // Close Add/Remove Window
 					return;
 				}
 
-				System.out.println(cityF + " to " + cityT + " with max flow of " + maxFlow);
+				System.out.println(cityF + " to " + cityT + " with max flow of " + maxFlow); // Temp to test values returned
 				subMenu.dispose();
 			}
 		});
