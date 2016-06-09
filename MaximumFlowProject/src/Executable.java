@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.PrintStream;
 import java.text.NumberFormat;
 
 import javax.swing.*;
@@ -56,7 +57,7 @@ public class Executable {
 		btnDrawGraph.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				// Draw Graph
+				 openDrawGraph();
 			}
 		});
 		
@@ -64,7 +65,7 @@ public class Executable {
 		btnGetMaximumFlow.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				// openGetMFlowMenu();
+				openGetMFlowMenu();
 			}
 		});
 		
@@ -141,4 +142,110 @@ public class Executable {
 	public void openReadFromFile(){
 		
 	}
+	
+	// Sub-Menu for Draw Graph Button
+	public void openDrawGraph(){
+		JFrame subMenu = new JFrame();
+		JButton btnExport = new JButton("Export");
+		JTextArea textArea = new JTextArea(50, 10);
+		textArea.setEditable(false);
+		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
+		// keeps reference of standard output stream;
+		PrintStream standardOut = System.out;
+		// re-assigns standard output stream and error output stream
+		System.setOut(printStream);
+		System.setErr(printStream);
+		
+		// Creates the GUI
+		subMenu.setLayout(new GridBagLayout());
+		subMenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		subMenu.setSize(480, 320);
+		subMenu.setLocationRelativeTo(null); // center
+		
+		
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.insets = new Insets(10, 10, 10, 10);
+		constraints.anchor = GridBagConstraints.WEST;
+		
+		subMenu.add(btnExport, constraints);
+		constraints.gridy = 1;
+		constraints.gridwidth = 2;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.weightx = 1.0;
+		constraints.weighty = 1.0;
+		
+		
+		
+		subMenu.add(new JScrollPane(textArea), constraints);
+		System.out.println("San Francisco --- 4 --- San Jose --- 3 --- Los Angeles"); // Temp output 
+		System.out.println("San Francisco --- 6 --- Sacramento --- 10 --- Los Angeles"); // Temp output
+		
+		btnExport.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				JOptionPane getOutputFile = new JOptionPane();
+				String fileName = getOutputFile.showInputDialog("Please enter filename");
+				System.out.println("\nExporting to: " + fileName); // Temp to ensure it works (prints to screen)
+			}
+		});
+		
+		subMenu.setVisible(true);
+		
+	}
+	
+	// Sub=Menu for Get Maximum Flow Button
+	public void openGetMFlowMenu(){
+		JFrame subMenu = new JFrame();
+		JButton btnExport = new JButton("Export");
+		JTextArea textArea = new JTextArea(50, 10);
+		textArea.setEditable(false);
+		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
+		// keeps reference of standard output stream;
+		PrintStream standardOut = System.out;
+		// re-assigns standard output stream and error output stream
+		System.setOut(printStream);
+		System.setErr(printStream);
+		
+		// Creates the GUI
+		subMenu.setLayout(new GridBagLayout());
+		subMenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		subMenu.setSize(480, 320);
+		subMenu.setLocationRelativeTo(null); // center
+		
+		
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.insets = new Insets(10, 10, 10, 10);
+		constraints.anchor = GridBagConstraints.WEST;
+		
+		subMenu.add(btnExport, constraints);
+		constraints.gridy = 1;
+		constraints.gridwidth = 2;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.weightx = 1.0;
+		constraints.weighty = 1.0;
+		
+		
+		
+		subMenu.add(new JScrollPane(textArea), constraints);
+		System.out.println("San Francisco --- 3/4 --- San Jose --- 3/3 --- Los Angeles"); // Temp output 
+		System.out.println("San Francisco --- 6/6 --- Sacramento --- 6/10 --- Los Angeles"); // Temp output
+		System.out.println("Maximum Flow: 10");
+		
+		btnExport.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				JOptionPane getOutputFile = new JOptionPane();
+				String fileName = getOutputFile.showInputDialog("Please enter filename");
+				System.out.println("\nExporting to: " + fileName); // Temp to ensure it works (prints to screen)
+			}
+		});
+		
+		subMenu.setVisible(true);
+		
+	}
+	
 }
