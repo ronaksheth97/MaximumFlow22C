@@ -15,6 +15,7 @@ public class Executable<E> {
 	private JButton btnDrawGraph = new JButton("Draw Graph");
 	private JButton btnGetMaximumFlow = new JButton("Get Maximum Flow");
 	private JButton btnUndoRemoval = new JButton("Undo Removal");
+	private JButton btnClear = new JButton("Clear Graph");
 	private JButton btnExit = new JButton("Exit");
 	private JLabel menuTitle = new JLabel("       Maximum Flow Problem");
 	FordFulkerson<E> graph;
@@ -27,7 +28,7 @@ public class Executable<E> {
 		graph = new FordFulkerson<E>();
 		
 		frame = new JFrame();
-		frame.setSize(200, 230); // Window Dimensions
+		frame.setSize(200, 240); // Window Dimensions
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null); // Center Window
 		Container c = frame.getContentPane();
@@ -38,6 +39,7 @@ public class Executable<E> {
 		c.add("DrawGraph", btnDrawGraph);
 		c.add("GetMax", btnGetMaximumFlow);
 		c.add("Undo", btnUndoRemoval);
+		c.add("Clear", btnClear);
 		c.add("Exit", btnExit);
 
 		// Click Read From File Button
@@ -81,6 +83,17 @@ public class Executable<E> {
 			}
 		});
 		
+		btnClear.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				int dialogButton = JOptionPane.OK_CANCEL_OPTION;
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to empty the graph?","Warning", dialogButton);
+				if(dialogResult == JOptionPane.OK_OPTION){
+					graph.clear();
+				}
+				
+			}
+		});
 		// Click Exit Button
 		btnExit.addActionListener(new ActionListener() {
 			@Override
@@ -106,12 +119,13 @@ public class Executable<E> {
 		final JTextField cap = new JTextField("Capacity");
 		JButton add = new JButton("Add");
 		JButton remove = new JButton("Remove");
-
+		JButton cancel = new JButton("Cancel");
 		c.add(vertex1);
 		c.add(vertex2);
 		c.add(cap);
 		c.add(add);
 		c.add(remove);
+		c.add(cancel);
 
 		add.addActionListener(new ActionListener() {
 			@Override
@@ -131,7 +145,7 @@ public class Executable<E> {
 					return;
 				}
 				
-				//graph.addEdge(cityF, cityT, maxFlow); Add edge to graph
+				graph.addEdge(cityF, cityT, maxFlow);
 				
 
 				System.out.println(cityF + " to " + cityT + " with max flow of " + maxFlow + " added"); // Temp to test values returned
@@ -144,8 +158,15 @@ public class Executable<E> {
 			public void actionPerformed(ActionEvent e) {
 				E cityF = (E) vertex1.getText();
 				E cityT = (E) vertex2.getText();
-				// graph.remove(cityF, cityT); Remove edge from graph
+				graph.remove(cityF, cityT);
 				System.out.println(cityF + " to " + cityT + " removed"); // Temp to test values returned
+				subMenu.dispose();
+			}
+		});
+		
+		cancel.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
 				subMenu.dispose();
 			}
 		});
@@ -195,7 +216,8 @@ public class Executable<E> {
 		
 		subMenu.add(new JScrollPane(textArea), constraints);
 		
-		displayGraph();
+		//displayGraph();
+		graph.showAdjTable();
 		// Test output to Export
 		//System.out.println(textArea.getText());
 		
