@@ -199,6 +199,10 @@ public class Executable {
 					System.err.print("\nInvalid File");
 					return;
 				}
+				catch(NullPointerException nx){
+					System.err.print("\nInvalid File");
+					return;
+				}
 				out.println(textArea.getText());
 				System.out.println("File Sucessfully Exported to " + fileName);
 				out.close();
