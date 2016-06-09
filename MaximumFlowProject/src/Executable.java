@@ -83,17 +83,19 @@ public class Executable<E> {
 			}
 		});
 		
+		// Click Clear Graph Button
 		btnClear.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				int dialogButton = JOptionPane.OK_CANCEL_OPTION;
+				int dialogButton = JOptionPane.YES_NO_OPTION;
 				int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to empty the graph?","Warning", dialogButton);
-				if(dialogResult == JOptionPane.OK_OPTION){
+				if(dialogResult == JOptionPane.YES_OPTION){
 					graph.clear();
 				}
 				
 			}
 		});
+		
 		// Click Exit Button
 		btnExit.addActionListener(new ActionListener() {
 			@Override
