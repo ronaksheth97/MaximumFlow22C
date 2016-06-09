@@ -77,7 +77,7 @@ public class Executable<E> {
 		btnUndoRemoval.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				//FordFulkerson.undo();
+				//graph.undo(); Undo Removal
 			}
 		});
 		
@@ -116,8 +116,8 @@ public class Executable<E> {
 		add.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String cityF = vertex1.getText();
-				String cityT = vertex2.getText();
+				E cityF = (E) vertex1.getText();
+				E cityT = (E) vertex2.getText();
 				String maxF = cap.getText();
 				int maxFlow;
 				try {
@@ -130,6 +130,9 @@ public class Executable<E> {
 					subMenu.dispose(); // Close Add/Remove Window
 					return;
 				}
+				
+				//graph.addEdge(cityF, cityT, maxFlow); Add edge to graph
+				
 
 				System.out.println(cityF + " to " + cityT + " with max flow of " + maxFlow + " added"); // Temp to test values returned
 				subMenu.dispose();
@@ -139,9 +142,9 @@ public class Executable<E> {
 		remove.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String cityF = vertex1.getText();
-				String cityT = vertex2.getText();
-
+				E cityF = (E) vertex1.getText();
+				E cityT = (E) vertex2.getText();
+				// graph.remove(cityF, cityT); Remove edge from graph
 				System.out.println(cityF + " to " + cityT + " removed"); // Temp to test values returned
 				subMenu.dispose();
 			}
@@ -261,21 +264,20 @@ public class Executable<E> {
 				E sinkE = (E) sinkS;
 				Vertex<E> sourceV = graph.getVertex(sourceE);
 				Vertex<E> sinkV = graph.getVertex(sinkE);
-				graph.setSource(sourceV);
-				graph.setSink(sinkV);
+				
 				
 				subMenu.dispose();
 				System.out.println(sourceS + " to " + sinkS + " shown"); // Temp to test values returned
 				
 				openDrawGraph();
-				//getMaxFlow();
+				//printMaxFlow(sourceV, sinkV); Print Maxmimum Flow
 			}
 		});
 		subMenu.setVisible(true);
 	}
 	
-	private void printMaxFlow(){
-		graph.applyFordFulkerson();
+	private void printMaxFlow(Vertex<E> source, Vertex<E> sink){
+		graph.applyFordFulkerson(source, sink);
 		int maxFlow = graph.getMaxFlow();
 		System.out.println("Maximum Flow: " + maxFlow);
 	}
