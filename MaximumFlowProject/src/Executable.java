@@ -7,7 +7,7 @@ import java.text.NumberFormat;
 
 import javax.swing.*;
 
-public class Executable<E> {
+public class Executable {
 
 	private JFrame frame;
 	private JButton btnReadFromFile = new JButton("Read From File");
@@ -17,15 +17,12 @@ public class Executable<E> {
 	private JButton btnUndoRemoval = new JButton("Undo Removal");
 	private JButton btnExit = new JButton("Exit");
 	private JLabel menuTitle = new JLabel("       Maximum Flow Problem");
-	FordFulkerson<E> graph;
 
 	public Executable() {
 		init();
 	}
 
 	private void init() {
-		graph = new FordFulkerson<E>();
-		
 		frame = new JFrame();
 		frame.setSize(200, 230); // Window Dimensions
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,13 +68,6 @@ public class Executable<E> {
 			@Override
 			public void actionPerformed(ActionEvent e){
 				openGetMFlowMenu();
-			}
-		});
-		
-		btnUndoRemoval.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e){
-				//FordFulkerson.undo();
 			}
 		});
 		
@@ -151,12 +141,12 @@ public class Executable<E> {
 
 	}
 	
-	private void openReadFromFile(){
+	public void openReadFromFile(){
 		
 	}
 	
 	// Sub-Menu for Draw Graph Button
-	private void openDrawGraph(){
+	public void openDrawGraph(){
 		JFrame subMenu = new JFrame();
 		JButton btnExport = new JButton("Export");
 		final JTextArea textArea = new JTextArea(50, 10);
@@ -191,8 +181,8 @@ public class Executable<E> {
 		
 		
 		subMenu.add(new JScrollPane(textArea), constraints);
-		
-		displayGraph();
+		System.out.println("San Francisco --- 4 --- San Jose --- 3 --- Los Angeles"); // Temp output 
+		System.out.println("San Francisco --- 6 --- Sacramento --- 10 --- Los Angeles"); // Temp output
 		// Test output to Export
 		//System.out.println(textArea.getText());
 		
@@ -225,65 +215,74 @@ public class Executable<E> {
 	}
 	
 	// Sub-Menu for Get Maximum Flow Button
-	private void openGetMFlowMenu(){
-		// Window for inputting source and sink names
-		final JFrame subMenu = new JFrame();
-		final JTextField source = new JTextField("Source");
-		final JTextField sink = new JTextField("Sink");
-		final JButton btncancel = new JButton("Cancel");
-		final JButton btncontinue = new JButton("Continue");
+	public void openGetMFlowMenu(){
+		JFrame subMenu = new JFrame();
+		JButton btnExport = new JButton("Export");
+		final JTextArea textArea = new JTextArea(50, 10);
+		textArea.setEditable(false);
+		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
+		// keeps reference of standard output stream;
+		PrintStream standardOut = System.out;
+		// re-assigns standard output stream and error output stream
+		System.setOut(printStream);
+		System.setErr(printStream);
 		
-		subMenu.setSize(200, 230); // Dimensions
+		// Creates the GUI
+		subMenu.setLayout(new GridBagLayout());
 		subMenu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		subMenu.setLocationRelativeTo(null); // Center
-		Container c = subMenu.getContentPane();
-		c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS)); // Panel Layout
+		subMenu.setSize(480, 320);
+		subMenu.setLocationRelativeTo(null); // center
 		
-		c.add("Source", source);
-		c.add("Sink", sink);
 		
-		c.add("Cancel", btncancel);
-		c.add("Continue", btncontinue);
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.insets = new Insets(10, 10, 10, 10);
+		constraints.anchor = GridBagConstraints.WEST;
 		
-		btncancel.addActionListener(new ActionListener(){
+		subMenu.add(btnExport, constraints);
+		constraints.gridy = 1;
+		constraints.gridwidth = 2;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.weightx = 1.0;
+		constraints.weighty = 1.0;
+		
+		
+		
+		subMenu.add(new JScrollPane(textArea), constraints);
+		System.out.println("San Francisco --- 3/4 --- San Jose --- 3/3 --- Los Angeles"); // Temp output 
+		System.out.println("San Francisco --- 6/6 --- Sacramento --- 6/10 --- Los Angeles"); // Temp output
+		System.out.println("Maximum Flow: 10");
+		
+		// Test output to export
+		//System.out.println(textArea.getText());
+		
+		btnExport.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				subMenu.dispose();
+				JOptionPane getOutputFile = new JOptionPane();
+				String fileName = getOutputFile.showInputDialog("Please enter filename");
+				PrintWriter out;
+				try{
+					out = new PrintWriter(fileName);
+				}
+				catch(FileNotFoundException ex){
+					System.err.print("\nInvalid File");
+					return;
+				}
+				catch(NullPointerException nx){
+					System.err.print("\nOutput Not Exported");
+					return;
+				}
+				out.println(textArea.getText());
+				System.out.println("File Sucessfully Exported to " + fileName);
+				out.close();
+				//System.out.println("\nExporting to: " + fileName) Temp to ensure it works (prints to screen)
 			}
 		});
 		
-		btncontinue.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e){
-				String sourceS = source.getText();
-				String sinkS = sink.getText();
-				E sourceE = (E) sourceS;
-				E sinkE = (E) sinkS;
-				Vertex<E> sourceV = graph.getVertex(sourceE);
-				Vertex<E> sinkV = graph.getVertex(sinkE);
-				graph.setSource(sourceV);
-				graph.setSink(sinkV);
-				
-				subMenu.dispose();
-				System.out.println(sourceS + " to " + sinkS + " shown"); // Temp to test values returned
-				
-				openDrawGraph();
-				//getMaxFlow();
-			}
-		});
 		subMenu.setVisible(true);
-	}
-	
-	private void printMaxFlow(){
-		graph.applyFordFulkerson();
-		int maxFlow = graph.getMaxFlow();
-		System.out.println("Maximum Flow: " + maxFlow);
-	}
-	
-	private void displayGraph(){
-		System.out.println("Testing displayGraph Method");
-		System.out.println("San Francisco --- 4 --- San Jose --- 3 --- Los Angeles");
-		System.out.println("San Francisco --- 6 --- Sacramento --- 10 --- Los Angeles");
+		
 	}
 	
 }

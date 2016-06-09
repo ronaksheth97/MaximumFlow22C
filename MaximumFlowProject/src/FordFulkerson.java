@@ -22,13 +22,6 @@ public class FordFulkerson<E> extends Graph<E> {
 
         applyFordFulkerson();
     }
-    
-    public FordFulkerson(){
-    	super();
-    	maxFlow = 0;
-    	source = null;
-    	sink = null;
-    }
 
     public int getMaxFlow() {
         return maxFlow;
@@ -80,22 +73,10 @@ public class FordFulkerson<E> extends Graph<E> {
         path.remove(source);
     }
 
-    public void applyFordFulkerson() {
+    private void applyFordFulkerson() {
         while(hasAugmentingPath(source, sink)) {
             // iterate through all paths and compute flow values
         }
-    }
-    
-    public void setSource(Vertex<E> _source){
-    	source = _source;
-    }
-    
-    public void setSink(Vertex<E> _sink){
-    	sink = _sink;
-    }
-    
-    public Vertex<E> getVertex(E name){
-    	return vertexSet.get(name);
     }
 
     class Edge<E> implements Comparable<Edge<E>> {
@@ -145,7 +126,7 @@ public class FordFulkerson<E> extends Graph<E> {
                 return maxFlow - currFlow;
             }
         }
-        
+
         
     }
 }
