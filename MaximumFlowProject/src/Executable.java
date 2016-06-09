@@ -200,7 +200,7 @@ public class Executable {
 					return;
 				}
 				catch(NullPointerException nx){
-					System.err.print("\nInvalid File");
+					System.err.print("\nOutput Not Exported");
 					return;
 				}
 				out.println(textArea.getText());
@@ -214,11 +214,11 @@ public class Executable {
 		
 	}
 	
-	// Sub=Menu for Get Maximum Flow Button
+	// Sub-Menu for Get Maximum Flow Button
 	public void openGetMFlowMenu(){
 		JFrame subMenu = new JFrame();
 		JButton btnExport = new JButton("Export");
-		JTextArea textArea = new JTextArea(50, 10);
+		final JTextArea textArea = new JTextArea(50, 10);
 		textArea.setEditable(false);
 		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
 		// keeps reference of standard output stream;
@@ -252,17 +252,32 @@ public class Executable {
 		subMenu.add(new JScrollPane(textArea), constraints);
 		System.out.println("San Francisco --- 3/4 --- San Jose --- 3/3 --- Los Angeles"); // Temp output 
 		System.out.println("San Francisco --- 6/6 --- Sacramento --- 6/10 --- Los Angeles"); // Temp output
-		System.out.println("Maximum Flow: 10\n");
+		System.out.println("Maximum Flow: 10");
 		
 		// Test output to export
-		System.out.println(textArea.getText());
+		//System.out.println(textArea.getText());
 		
 		btnExport.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
 				JOptionPane getOutputFile = new JOptionPane();
 				String fileName = getOutputFile.showInputDialog("Please enter filename");
-				System.out.println("\nExporting to: " + fileName); // Temp to ensure it works (prints to screen)
+				PrintWriter out;
+				try{
+					out = new PrintWriter(fileName);
+				}
+				catch(FileNotFoundException ex){
+					System.err.print("\nInvalid File");
+					return;
+				}
+				catch(NullPointerException nx){
+					System.err.print("\nOutput Not Exported");
+					return;
+				}
+				out.println(textArea.getText());
+				System.out.println("File Sucessfully Exported to " + fileName);
+				out.close();
+				//System.out.println("\nExporting to: " + fileName) Temp to ensure it works (prints to screen)
 			}
 		});
 		
