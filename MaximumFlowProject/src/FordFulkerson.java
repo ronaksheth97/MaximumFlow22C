@@ -7,33 +7,32 @@ import java.util.Map.Entry;
 // 3. write FordFulkerson code
 
 // CHANGES:
-// 1. Fixed iterator
-// 2. Changed paths and currPath types
-// 3. Added exceptions for Edge class
+// 1. Removed currPath as a data member
+// 2. Modified hasAugmentingPath and hasAugmentingPathRecursive
+// 3. Small changes to applyFordFulkerson
+// 4. Removed source and sink data members to allow the user to have multiple MaximumFlowGraphs everytime
 
 public class FordFulkerson<E> extends Graph<E> {
     private int maxFlow;
-    private Vertex<E> source;
-    private Vertex<E> sink;
+    // private Vertex<E> source;
+    // private Vertex<E> sink;
     // private HashMap<E, Edge<E>> edgeSet;
     private List<List<Vertex<E>>> paths;
-    private List<Vertex<E>> currPath;
+    // private List<Vertex<E>> currPath;
     private LinkedStack<Vertex<E>> undoRemoveStack;
 
+    /*
     public FordFulkerson(Vertex<E> _source, Vertex<E> _sink) {
         super();
         maxFlow = 0;
-        source = _source;
-        sink = _sink;
 
-        // applyFordFulkerson();
+        // applyFordFulkerson(_source, _sink);
     }
+    */
     
     public FordFulkerson(){
     	super();
     	maxFlow = 0;
-    	source = null;
-    	sink = null;
     }
 
     public int getMaxFlow() {
@@ -42,6 +41,10 @@ public class FordFulkerson<E> extends Graph<E> {
 
     public List<List<Vertex<E>>> getPaths() {
         return paths;
+    }
+    
+    public Vertex<E> getVertex(E name){
+    	return vertexSet.get(name);
     }
 
     public boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink) {
@@ -58,13 +61,12 @@ public class FordFulkerson<E> extends Graph<E> {
         }
 
         paths = new ArrayList<List<Vertex<E>>>();
-        currPath = new LinkedList<Vertex<E>>();
-        hasAugmentingPathRecursive(source, sink);
+        hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
         
         return !paths.isEmpty();
     }
 
-    private void hasAugmentingPathRecursive(Vertex<E> source, Vertex<E> sink) {
+    private void hasAugmentingPathRecursive(Vertex<E> source, Vertex<E> sink, List<Vertex<E>> currPath) {
         currPath.add(source);
 
         if(source.equals(sink)) {
@@ -79,29 +81,19 @@ public class FordFulkerson<E> extends Graph<E> {
             Vertex<E> edge = iterator.next().getValue().first;
             if(!edge.isVisited()) {
                 edge.visit();
-                hasAugmentingPathRecursive(edge, sink);
+                hasAugmentingPathRecursive(edge, sink, currPath);
             }
         }
 
         currPath.remove(source);
     }
 
-    public void applyFordFulkerson() {
-        while(hasAugmentingPath(source, sink)) {
+    public void applyFordFulkerson(Vertex<E> source, Vertex<E> sink) {
+        paths.clear();
+        if(hasAugmentingPath(source, sink)) {
             // iterate through all paths and compute flow values
         }
-    }
-    
-    public void setSource(Vertex<E> _source){
-    	source = _source;
-    }
-    
-    public void setSink(Vertex<E> _sink){
-    	sink = _sink;
-    }
-    
-    public Vertex<E> getVertex(E name){
-    	return vertexSet.get(name);
+
     }
 
     class Edge<E> implements Comparable<Edge<E>> {
