@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.text.NumberFormat;
 
 import javax.swing.*;
@@ -147,7 +149,7 @@ public class Executable {
 	public void openDrawGraph(){
 		JFrame subMenu = new JFrame();
 		JButton btnExport = new JButton("Export");
-		JTextArea textArea = new JTextArea(50, 10);
+		final JTextArea textArea = new JTextArea(50, 10);
 		textArea.setEditable(false);
 		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
 		// keeps reference of standard output stream;
@@ -181,13 +183,26 @@ public class Executable {
 		subMenu.add(new JScrollPane(textArea), constraints);
 		System.out.println("San Francisco --- 4 --- San Jose --- 3 --- Los Angeles"); // Temp output 
 		System.out.println("San Francisco --- 6 --- Sacramento --- 10 --- Los Angeles"); // Temp output
+		// Test output to Export
+		//System.out.println(textArea.getText());
 		
 		btnExport.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
 				JOptionPane getOutputFile = new JOptionPane();
 				String fileName = getOutputFile.showInputDialog("Please enter filename");
-				System.out.println("\nExporting to: " + fileName); // Temp to ensure it works (prints to screen)
+				PrintWriter out;
+				try{
+					out = new PrintWriter(fileName);
+				}
+				catch(FileNotFoundException ex){
+					System.err.print("\nInvalid File");
+					return;
+				}
+				out.println(textArea.getText());
+				System.out.println("File Sucessfully Exported to " + fileName);
+				out.close();
+				//System.out.println("\nExporting to: " + fileName) Temp to ensure it works (prints to screen)
 			}
 		});
 		
@@ -233,7 +248,10 @@ public class Executable {
 		subMenu.add(new JScrollPane(textArea), constraints);
 		System.out.println("San Francisco --- 3/4 --- San Jose --- 3/3 --- Los Angeles"); // Temp output 
 		System.out.println("San Francisco --- 6/6 --- Sacramento --- 6/10 --- Los Angeles"); // Temp output
-		System.out.println("Maximum Flow: 10");
+		System.out.println("Maximum Flow: 10\n");
+		
+		// Test output to export
+		System.out.println(textArea.getText());
 		
 		btnExport.addActionListener(new ActionListener(){
 			@Override
