@@ -2,16 +2,22 @@ import java.util.*;
 import java.util.Map.Entry;
 
 // TO DO:
-// 1. add undoRemoveStack and implement the removeEdge functions by calling super()
-// 2. write FordFulkerson code
-// 3.
+// 1. fix hasAugmentingPath (done)
+// 2. add undoRemoveStack and implement the removeEdge functions by calling super()
+// 3. write FordFulkerson code
+
+// CHANGES:
+// 1. Fixed iterator
+// 2. Changed paths and currPath types
+// 3. Added exceptions for Edge class
 
 public class FordFulkerson<E> extends Graph<E> {
     private int maxFlow;
     private Vertex<E> source;
     private Vertex<E> sink;
-    private HashMap<E, Edge<E>> edgeSet;
-    private List<List<E>> paths;
+    // private HashMap<E, Edge<E>> edgeSet;
+    private List<List<Vertex<E>>> paths;
+    private List<Vertex<E>> currPath;
     private LinkedStack<Vertex<E>> undoRemoveStack;
 
     public FordFulkerson(Vertex<E> _source, Vertex<E> _sink) {
@@ -20,7 +26,7 @@ public class FordFulkerson<E> extends Graph<E> {
         source = _source;
         sink = _sink;
 
-        applyFordFulkerson();
+        // applyFordFulkerson();
     }
     
     public FordFulkerson(){
@@ -34,7 +40,7 @@ public class FordFulkerson<E> extends Graph<E> {
         return maxFlow;
     }
 
-    public List<List<E>> getPaths() {
+    public List<List<Vertex<E>>> getPaths() {
         return paths;
     }
 
@@ -52,32 +58,32 @@ public class FordFulkerson<E> extends Graph<E> {
         }
 
         paths = new ArrayList<List<Vertex<E>>>();
-        hasAugmentingPathRecursive(source, sink, new LinkedHashSet<Vertex<E>>());
+        currPath = new LinkedList<Vertex<E>>();
+        hasAugmentingPathRecursive(source, sink);
         
-        return paths.isEmpty();
+        return !paths.isEmpty();
     }
 
-    // use LinkedHashSet to allow for easy searching of elements within a path
-    private void hasAugmentingPathRecursive(Vertex<E> source, Vertex<E> sink, LinkedHashSet<Vertex<E>> path) {
-        path.add(source);
+    private void hasAugmentingPathRecursive(Vertex<E> source, Vertex<E> sink) {
+        currPath.add(source);
 
         if(source.equals(sink)) {
-            paths.add(new LinkedList<Vertex<E>>(path));
-            path.remove(source);
+            paths.add(new LinkedList<Vertex<E>>(currPath));
+            currPath.remove(source);
             return;
         }
 
-        Iterator iterator = source.iterator();
+        Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iterator = source.iterator();
 
         while(iterator.hasNext()) {
-            Vertex<E> edge = iterator.next();
+            Vertex<E> edge = iterator.next().getValue().first;
             if(!edge.isVisited()) {
                 edge.visit();
-                hasAugmentingPathRecursive(edge, sink, path);
+                hasAugmentingPathRecursive(edge, sink);
             }
         }
 
-        path.remove(source);
+        currPath.remove(source);
     }
 
     public void applyFordFulkerson() {
@@ -99,51 +105,55 @@ public class FordFulkerson<E> extends Graph<E> {
     }
 
     class Edge<E> implements Comparable<Edge<E>> {
-	    Vertex<E> source, dest;
+	    Vertex<E> from, to;
 	    int maxFlow;
         int currFlow;
 	
-	    Edge( Vertex<E> _source, Vertex<E> _dest, int _maxFlow) {
-	        source = _source;
-	        dest = _dest;
+	    Edge( Vertex<E> _from, Vertex<E> _to, int _maxFlow) {
+	        from = _from;
+	        to = _to;
 	        maxFlow = _maxFlow;
             currFlow = 0;
 	    }
 
         public void setCurrFlow(Vertex<E> v, int amount) {
-            if(v.equals(source)) {
+            if(v.equals(from)) {
                 currFlow -= amount;
-            } else if(v.equals(dest)) {
+            } else if(v.equals(to)) {
                 currFlow += amount;
             }
         }
 
         public Vertex<E> getOpposite(Vertex<E> v) {
-            if(v.equals(source)) {
-                return sink;
+            if(v.equals(from)) {
+                return to;
             }
 
-            if(v.equals(sink)) {
-                return source;
+            if(v.equals(to)) {
+                return from;
             }
+            
+            throw new IllegalArgumentException("ERROR: Invalid vertex argument. The given vertex is not connected to this edge.");
         }
 	     
 	    public String toString(){
-            return "Edge: " + source.getData() + " to " + dest.getData() + ", max capacity: " + maxFlow + ", current capacity: " + currFlow;
+            return "Edge: " + from.getData() + " to " + to.getData() + ", max capacity: " + maxFlow + ", current capacity: " + currFlow;
 	    }
 	     
-	    public int compareTo( Edge<E> rhs ) {
-	        return (cost < rhs.cost? -1 : cost > rhs.cost? 1 : 0);
+	    public int compareTo(Edge<E> rhs) {
+	        return (maxFlow < rhs.maxFlow? -1 : maxFlow > rhs.maxFlow? 1 : 0);
 	    }
 
         public int getResidualCapacity(Vertex<E> v) {
-            if(v.equals(source)) {
+            if(v.equals(from)) {
                 return currFlow;
             }
 
-            if(v.equals(sink)) {
+            if(v.equals(to)) {
                 return maxFlow - currFlow;
             }
+
+            throw new IllegalArgumentException("ERROR: Invalid vertex argument. The given vertex is not connected to this edge.");
         }
         
         
