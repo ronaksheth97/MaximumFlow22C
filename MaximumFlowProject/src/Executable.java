@@ -202,7 +202,7 @@ public class Executable<E> {
 		return scanner;
 	}
 	/* Method to read file (adds edges directly to graph)
-	 * Format: "CityFrom,CityTo,Capacity" ***NO SPACE AFTER COMMA***
+	 * Format: "CityFrom,CityTo,Capacity" ***SPACE AFTER COMMA***
 	 */
 	private void readFromFile(String filename){
 		boolean failed = false;
@@ -215,7 +215,7 @@ public class Executable<E> {
 			String line = file.nextLine();
 			line = line.trim();
 		  //line = line.replaceAll("\\s","");
-			String[] aline = line.split(",");
+			String[] aline = line.split(", ");
 			if(aline.length != 3){
 				printErrMsg("Unable to add: " + line);
 			}
