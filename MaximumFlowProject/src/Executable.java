@@ -1,9 +1,11 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
+import java.util.Scanner;
 
 import javax.swing.*;
 
@@ -19,6 +21,7 @@ public class Executable<E> {
 	private JButton btnExit = new JButton("Exit");
 	private JLabel menuTitle = new JLabel("       Maximum Flow Problem");
 	FordFulkerson<E> graph;
+	public static Scanner userScanner = new Scanner(System.in);
 
 	public Executable() {
 		init();
@@ -48,7 +51,8 @@ public class Executable<E> {
 			public void actionPerformed(ActionEvent e){
 				JOptionPane getInputFile = new JOptionPane();
 				String fileName = getInputFile.showInputDialog("Please enter filename");
-				System.out.println(fileName); // Temp to ensure it works
+				if(fileName == null) return;
+				readFromFile(fileName);
 			}
 		});
 		
@@ -132,6 +136,7 @@ public class Executable<E> {
 		add.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				String err = "Invalid Capacity";
 				E cityF = (E) vertex1.getText();
 				E cityT = (E) vertex2.getText();
 				String maxF = cap.getText();
@@ -140,10 +145,11 @@ public class Executable<E> {
 					maxFlow = Integer.parseInt(maxF);
 				} catch (Exception inv) { // If unable to parse input as int,
 											// close window and return
-					Object[] options = {"OK"};
-					JOptionPane.showOptionDialog(null, "Invalid capacity, unable to add", "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-					//err.setVisible(true);
-					subMenu.dispose(); // Close Add/Remove Window
+					printErrMsg(err);
+					return;
+				}
+				if(maxFlow < 1){
+					printErrMsg(err);
 					return;
 				}
 				
@@ -177,8 +183,66 @@ public class Executable<E> {
 
 	}
 	
-	private void openReadFromFile(){
-		
+	private void printErrMsg(String msg){
+		Object[] options = {"OK"};
+		JOptionPane.showOptionDialog(null, msg, "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+	}
+	// Method to open file
+	public static Scanner openInputFile(String filename) {
+		Scanner scanner = null;
+		File file = new File(filename);
+
+		try {
+			scanner = new Scanner(file);
+		} // end try
+		catch (FileNotFoundException fe) {
+			System.out.println("Can't open input file\n");
+			return null; // array of 0 elements
+		} // end catch
+		return scanner;
+	}
+	/* Method to read file (adds edges directly to graph)
+	 * Format: "CityFrom,CityTo,Capacity" ***NO SPACE AFTER COMMA***
+	 */
+	private void readFromFile(String filename){
+		boolean failed = false;
+		Scanner file = openInputFile(filename);
+		if(file == null){
+			printErrMsg("Unable to open " + filename);
+			return;
+		}
+		while(file.hasNextLine()){
+			String line = file.nextLine();
+			line = line.trim();
+		  //line = line.replaceAll("\\s","");
+			String[] aline = line.split(",");
+			if(aline.length != 3){
+				printErrMsg("Unable to add: " + line);
+			}
+			else{
+				String from = aline[0];
+				E fromE = (E) from;
+				String to = aline[1];
+				E toE = (E) to;
+				String caps = aline[2];
+				int cap = -1;
+				try {
+					cap = Integer.parseInt(caps);
+				} catch (Exception inv) { // If unable to parse input as int,
+											// close window and return
+					printErrMsg("Unable to add: " + line);
+					failed = true;
+				}
+				if(cap < 1 && !failed){ // If capacity is 0 or negative
+					printErrMsg("Unable to add: " + line);
+					failed = true;
+				}
+				if(!failed){ // Do not add if failed
+					graph.addEdge(fromE, toE, cap);
+				}
+			}
+			failed = false; // Reset for next line
+		}
 	}
 	
 	// Sub-Menu for Draw Graph Button
