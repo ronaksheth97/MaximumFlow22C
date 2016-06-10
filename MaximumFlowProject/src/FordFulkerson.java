@@ -2,24 +2,20 @@ import java.util.*;
 import java.util.Map.Entry;
 
 // TO DO:
-// 1. fix hasAugmentingPath (done)
-// 2. add undoRemoveStack and implement the removeEdge functions by calling super()
-// 3. write FordFulkerson code
+// 1. fix hasAugmentingPath (DONE)
+// 2. add undoRemoveStack and implement the removeEdge functions by calling super() (DONE)
+// 3. add edgeSet functionality (DONE)
+// 4. write FordFulkerson code
 
 // CHANGES:
-// 1. Removed currPath as a data member
-// 2. Modified hasAugmentingPath and hasAugmentingPathRecursive
-// 3. Small changes to applyFordFulkerson
-// 4. Removed source and sink data members to allow the user to have multiple MaximumFlowGraphs everytime
+// 1. Added undoRemoveStack functionality
+// 2. Added edgeSet functionality
 
 public class FordFulkerson<E> extends Graph<E> {
     private int maxFlow;
-    // private Vertex<E> source;
-    // private Vertex<E> sink;
-    // private HashMap<E, Edge<E>> edgeSet;
+    private HashMap<Vertex<E>, Edge<E>> edgeSet;
     private List<List<Vertex<E>>> paths;
-    // private List<Vertex<E>> currPath;
-    private LinkedStack<Vertex<E>> undoRemoveStack;
+    private LinkedStack<Pair<Vertex<E>, Edge<E>>> undoRemoveStack;
 
     /*
     public FordFulkerson(Vertex<E> _source, Vertex<E> _sink) {
@@ -33,6 +29,8 @@ public class FordFulkerson<E> extends Graph<E> {
     public FordFulkerson(){
     	super();
     	maxFlow = 0;
+        edgeSet = new HashMap<Vertex<E>, Edge<E>>();
+        undoRemoveStack = new LinkedStack<Pair<Vertex<E>, Edge<E>>>();
     }
 
     public int getMaxFlow() {
@@ -43,8 +41,57 @@ public class FordFulkerson<E> extends Graph<E> {
         return paths;
     }
     
-    public Vertex<E> getVertex(E name){
-    	return vertexSet.get(name);
+    public Vertex<E> getVertex(E key){
+    	return vertexSet.get(key);
+    }
+
+    public boolean contains(E key) {
+        return edgeSet.containsKey(vertexSet.get(key));
+    }
+
+    public void clear() {
+        super.clear();
+        edgeSet.clear();
+        paths.clear();
+        while(undoRemoveStack.peek() != null) {
+            undoRemoveStack.pop();
+        }
+        maxFlow = 0;
+    }
+
+    public void addEdge(E source, E dest, int maxFlow) {
+        super.addEdge(source, dest, maxFlow);
+        Vertex<E> from = getVertex(source);
+        Vertex<E> to = getVertex(dest);
+        edgeSet.put(from, new Edge<E>(from, to, maxFlow));
+    }
+
+    public boolean remove(E start, E end) {
+        Vertex<E> from = getVertex(start);
+        if(from == null) {
+            throw new IllegalArgumentException("ERROR: The element to be removed is null or does not exist in the graph.");
+        }
+
+        Edge<E> temp = edgeSet.get(from);
+        if(temp == null) {
+            throw new NullPointerException("ERROR: Edge associated with the vertex does not exist.");
+        }
+
+        edgeSet.remove(from);
+        undoRemoveStack.push(new Pair<Vertex<E>, Edge<E>>(from, temp));
+        return super.remove(start, end);
+    }
+
+    public void undoRemove() {
+        if(undoRemoveStack.peek() == null) {
+            throw new NullPointerException("ERROR: The undo stack is null. There is nothing to undo.");
+        }
+
+        Pair<Vertex<E>, Edge<E>> undo = undoRemoveStack.pop();
+        Vertex<E> vertex = undo.first;
+        Edge<E> edge = undo.second;
+        edgeSet.put(vertex, edge);
+        addEdge(vertex.data, edge.to.data, edge.maxFlow);
     }
 
     public boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink) {
@@ -61,18 +108,17 @@ public class FordFulkerson<E> extends Graph<E> {
         }
 
         paths = new ArrayList<List<Vertex<E>>>();
-        hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
         
-        return !paths.isEmpty();
+        return hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
     }
 
-    private void hasAugmentingPathRecursive(Vertex<E> source, Vertex<E> sink, List<Vertex<E>> currPath) {
+    private boolean hasAugmentingPathRecursive(Vertex<E> source, Vertex<E> sink, List<Vertex<E>> currPath) {
         currPath.add(source);
 
         if(source.equals(sink)) {
             paths.add(new LinkedList<Vertex<E>>(currPath));
             currPath.remove(source);
-            return;
+            return true;
         }
 
         Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iterator = source.iterator();
@@ -81,11 +127,12 @@ public class FordFulkerson<E> extends Graph<E> {
             Vertex<E> edge = iterator.next().getValue().first;
             if(!edge.isVisited()) {
                 edge.visit();
-                hasAugmentingPathRecursive(edge, sink, currPath);
+                return hasAugmentingPathRecursive(edge, sink, currPath);
             }
         }
 
         currPath.remove(source);
+        return false;
     }
 
     public void applyFordFulkerson(Vertex<E> source, Vertex<E> sink) {
@@ -101,7 +148,7 @@ public class FordFulkerson<E> extends Graph<E> {
 	    int maxFlow;
         int currFlow;
 	
-	    Edge( Vertex<E> _from, Vertex<E> _to, int _maxFlow) {
+	    Edge(Vertex<E> _from, Vertex<E> _to, int _maxFlow) {
 	        from = _from;
 	        to = _to;
 	        maxFlow = _maxFlow;

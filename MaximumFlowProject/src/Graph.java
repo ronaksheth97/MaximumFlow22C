@@ -149,7 +149,7 @@ public class Graph<E>
 	   if( startVertex != null )
 	   {
 		   Pair<Vertex<E>, Double> endPair = startVertex.adjList.remove(end);
-		   removedOK = endPair!=null;
+		   removedOK = endPair != null;
 	   }
 	   /*// Add if UNDIRECTED GRAPH:
 		Vertex<E> endVertex = vertexSet.get(end);
