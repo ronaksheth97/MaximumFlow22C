@@ -151,7 +151,7 @@ public class Graph<E>
 		   Pair<Vertex<E>, Double> endPair = startVertex.adjList.remove(end);
 		   removedOK = endPair != null;
 	   }
-	   /*// Add if UNDIRECTED GRAPH:
+	   /* Add if UNDIRECTED GRAPH:
 		Vertex<E> endVertex = vertexSet.get(end);
 		if( endVertex != null )
 		{

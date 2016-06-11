@@ -8,39 +8,40 @@ public class Driver {
         ff.addEdge("Austin", "Phoenix", 1);
         
         Vertex<String> from = ff.getVertex("Los Angeles");
-        Vertex<String> to = ff.getVertex("Phoenix");
+        Vertex<String> to = ff.getVertex("San Francisco");
 
         // from.showAdjList();
         // ff.showAdjTable();
 
         System.out.println("Finding path from " + from.data.toString() + " to " + to.data.toString() + ": " + ff.hasAugmentingPath(from, to));
 
-        Vertex<String> temp = ff.getVertex("Austin");
-        if(ff.contains("Austin")) {
-            System.out.println("Contains Austin!");
+        if(ff.containsEdge("San Jose", "San Francisco")) {
+            System.out.println("Contains San Francisco!");
         } else {
-            System.out.println("Does not contain Austin!");
+            System.out.println("Does not contain San Francisco!");
         }
 
-        System.out.println("Removing the node from " + temp.data.toString() + " to " + to.data.toString() + " from graph");
-        if(ff.remove("Austin", "Phoenix")) {
-            System.out.println("Removed Austin.");
+        Vertex<String> temp = ff.getVertex("San Jose");
+        System.out.println("Removing the edge from " + temp.data.toString() + " to " + to.data.toString() + " from graph");
+        if(ff.remove("San Jose", "San Francisco")) {
+            System.out.println("Removed San Francisco.");
         } else {
-            System.out.println("Did not remove Austin.");
+            System.out.println("Did not remove San Francisco.");
         }
 
-        if(ff.contains("Austin")) {
-            System.out.println("Contains Austin!");
+        if(ff.containsEdge("San Jose", "San Francisco")) {
+            System.out.println("Contains San Francisco!");
         } else {
-            System.out.println("Does not contain Austin!");
+            System.out.println("Does not contain San Francisco!");
         }
 
         System.out.println("Undoing remove...");
         ff.undoRemove();
-        if(ff.contains("Austin")) {
-            System.out.println("Contains Austin!");
+        if(ff.containsEdge("San Jose", "San Francisco")) {
+            System.out.println("Contains San Francisco!");
         } else {
-            System.out.println("Does not contain Austin!");
+            System.out.println("Does not contain San Francisco!");
         }
     }
 }
+

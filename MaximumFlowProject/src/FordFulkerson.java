@@ -8,13 +8,13 @@ import java.util.Map.Entry;
 // 4. write FordFulkerson code
 
 // CHANGES:
-// 1. Added undoRemoveStack functionality
-// 2. Added edgeSet functionality
+// 1. Changed hasAugmentingPath to perform BFS using a queue to find the shortest path (according to my research this is consistently the most efficient method)
+// 2. Changed edgeSet to a new HashMap called edgeTable implementing separate chaining since the previous one didn't handle collisions
+// 3. Made the graph bidirectional to allow for negative flow values as specified by the problem
 
 public class FordFulkerson<E> extends Graph<E> {
     private int maxFlow;
-    private HashMap<Vertex<E>, Edge<E>> edgeSet;
-    private List<List<Vertex<E>>> paths;
+    private HashMap<Vertex<E>, LinkedList<Edge<E>>> edgeTable; // separate chaining
     private LinkedStack<Pair<Vertex<E>, Edge<E>>> undoRemoveStack;
 
     /*
@@ -29,7 +29,7 @@ public class FordFulkerson<E> extends Graph<E> {
     public FordFulkerson(){
     	super();
     	maxFlow = 0;
-        edgeSet = new HashMap<Vertex<E>, Edge<E>>();
+        edgeTable = new HashMap<Vertex<E>, LinkedList<Edge<E>>>();
         undoRemoveStack = new LinkedStack<Pair<Vertex<E>, Edge<E>>>();
     }
 
@@ -37,49 +37,98 @@ public class FordFulkerson<E> extends Graph<E> {
         return maxFlow;
     }
 
-    public List<List<Vertex<E>>> getPaths() {
-        return paths;
-    }
-    
     public Vertex<E> getVertex(E key){
     	return vertexSet.get(key);
     }
 
-    public boolean contains(E key) {
-        return edgeSet.containsKey(vertexSet.get(key));
+    public boolean containsVertex(E key) {
+        return vertexSet.get(key) != null;
+    }
+
+    public boolean containsEdge(E source, E dest) {
+        Vertex<E> sourceVertex = vertexSet.get(source);
+        Vertex<E> destVertex = vertexSet.get(dest);
+
+        LinkedList<Edge<E>> edgeList = edgeTable.get(sourceVertex);
+        if(edgeList == null) {
+            throw new IllegalArgumentException("ERROR: The given vertex has no associated edges going to it.");
+        }
+
+        Iterator<Edge<E>> iterator = edgeList.iterator();
+        while(iterator.hasNext()) {
+            Edge<E> edge = iterator.next();
+            if(edge.from.equals(sourceVertex) && edge.to.equals(destVertex)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void clear() {
         super.clear();
-        edgeSet.clear();
-        paths.clear();
+        edgeTable.clear();
+
         while(undoRemoveStack.peek() != null) {
             undoRemoveStack.pop();
         }
         maxFlow = 0;
     }
 
-    public void addEdge(E source, E dest, int maxFlow) {
+    public void addEdge(E source, E dest, int capacity) {
         super.addEdge(source, dest, maxFlow);
+
         Vertex<E> from = getVertex(source);
         Vertex<E> to = getVertex(dest);
-        edgeSet.put(from, new Edge<E>(from, to, maxFlow));
+
+        addEdgeHelper(from, to, capacity);
+        addEdgeHelper(to, from, capacity);
+    }
+
+    private void addEdgeHelper(Vertex<E> key, Vertex<E> dest, int capacity) {
+        LinkedList<Edge<E>> edgeList;
+        if(!edgeTable.containsKey(key)) {
+            edgeList = new LinkedList<Edge<E>>();
+            edgeList.add(new Edge<E>(key, dest, capacity));
+            edgeTable.put(key, edgeList);
+        } else {
+            edgeList = edgeTable.get(key);
+            edgeList.add(new Edge<E>(key, dest, capacity));
+        }
+
     }
 
     public boolean remove(E start, E end) {
-        Vertex<E> from = getVertex(start);
-        if(from == null) {
+        Vertex<E> source = getVertex(start);
+        if(source == null) {
             throw new IllegalArgumentException("ERROR: The element to be removed is null or does not exist in the graph.");
         }
 
-        Edge<E> temp = edgeSet.get(from);
-        if(temp == null) {
+        Vertex<E> dest = getVertex(end);
+        if(dest == null) {
+            throw new IllegalArgumentException("ERROR: The source vertex of the element to be removed is null or does not exist in the graph.");
+        }
+
+        removeHelper(source, dest);
+        removeHelper(dest, source);
+        
+        return super.remove(start, end);
+    }
+
+    private void removeHelper(Vertex<E> source, Vertex<E> dest) {
+        LinkedList<Edge<E>> tempList = edgeTable.get(source);
+        if(tempList.isEmpty() || tempList == null) {
             throw new NullPointerException("ERROR: Edge associated with the vertex does not exist.");
         }
 
-        edgeSet.remove(from);
-        undoRemoveStack.push(new Pair<Vertex<E>, Edge<E>>(from, temp));
-        return super.remove(start, end);
+        Iterator<Edge<E>> iterator = tempList.iterator();
+        while(iterator.hasNext()) {
+            Edge<E> edge = iterator.next();
+            if(edge.from.equals(source) && edge.to.equals(dest)) {
+                undoRemoveStack.push(new Pair<Vertex<E>, Edge<E>>(source, new Edge<E>(edge.from, edge.to, edge.maxFlow)));
+                iterator.remove();
+            }
+        }
     }
 
     public void undoRemove() {
@@ -90,7 +139,6 @@ public class FordFulkerson<E> extends Graph<E> {
         Pair<Vertex<E>, Edge<E>> undo = undoRemoveStack.pop();
         Vertex<E> vertex = undo.first;
         Edge<E> edge = undo.second;
-        edgeSet.put(vertex, edge);
         addEdge(vertex.data, edge.to.data, edge.maxFlow);
     }
 
@@ -107,36 +155,38 @@ public class FordFulkerson<E> extends Graph<E> {
             throw new IllegalArgumentException("ERROR: The source and sink cannot be the same.");
         }
 
-        paths = new ArrayList<List<Vertex<E>>>();
-        
-        return hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
-    }
+        LinkedQueue<Vertex<E>> queue = new LinkedQueue<Vertex<E>>();
 
-    private boolean hasAugmentingPathRecursive(Vertex<E> source, Vertex<E> sink, List<Vertex<E>> currPath) {
-        currPath.add(source);
+        queue.enqueue(source);
+        source.visit();
+        while(!queue.isEmpty()) {
+            Vertex<E> vertex = queue.dequeue();
 
-        if(source.equals(sink)) {
-            paths.add(new LinkedList<Vertex<E>>(currPath));
-            currPath.remove(source);
-            return true;
-        }
+            Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> neighborIterator = source.iterator();
 
-        Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iterator = source.iterator();
+            while(neighborIterator.hasNext()) {
+                Vertex<E> neighbor = neighborIterator.next().getValue().first;
 
-        while(iterator.hasNext()) {
-            Vertex<E> edge = iterator.next().getValue().first;
-            if(!edge.isVisited()) {
-                edge.visit();
-                return hasAugmentingPathRecursive(edge, sink, currPath);
+                LinkedList<Edge<E>> edgeList = edgeTable.get(neighbor);
+                Iterator<Edge<E>> edgeIterator = edgeList.iterator();
+                while(edgeIterator.hasNext()) {
+                    Edge<E> edge = edgeIterator.next();
+                    Vertex<E> opposite = edge.getOpposite(neighbor);
+
+                    if(edge.getResidualCapacity(opposite) > 0) {
+                        if(!opposite.isVisited()) {
+                            opposite.visit();
+                            queue.enqueue(opposite);
+                        }
+                    }
+                }
             }
         }
 
-        currPath.remove(source);
-        return false;
+        return sink.isVisited();
     }
 
     public void applyFordFulkerson(Vertex<E> source, Vertex<E> sink) {
-        paths.clear();
         if(hasAugmentingPath(source, sink)) {
             // iterate through all paths and compute flow values
         }
@@ -198,3 +248,4 @@ public class FordFulkerson<E> extends Graph<E> {
         
     }
 }
+
