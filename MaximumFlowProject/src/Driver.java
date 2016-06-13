@@ -129,7 +129,15 @@ public class Driver {
         System.out.println("\nFord-Fulkerson Time: " + elapsedTime + " milliseconds.");
         
         
-        System.out.println("\n\n" + ff2.getGraphMatrix());
+        System.out.println("\n\n" + ff2.getGraphMatrix() + "\n\n");
+        
+        Visitor<String> vis = new FlowVisitor<>();
+        
+        System.out.println("Breath First Traversal:");
+        ff2.breadthFirstTraversal("Seattle", vis);
+        
+        System.out.println("\n\nDepth First Traversal:");
+        ff2.depthFirstTraversal("Seattle", vis);
         /*
         System.out.println("\n--------------------------------------------\nTESTING EDMONDS-KARP:");
         EdmondsKarp<String> ek = new EdmondsKarp<String>();
