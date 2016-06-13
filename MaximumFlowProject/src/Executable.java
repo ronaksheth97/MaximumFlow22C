@@ -15,7 +15,10 @@ public class Executable<E> {
 	private JPanel panel_North, panel_Center, panel_West, panel_East, panel_South;
 	private JButton btnReadFromFile = new JButton("Read From File");
 	private JButton btnAddremoveEdge = new JButton("Add/Remove Edge");
-	private JButton btnDrawGraph = new JButton("Draw Graph");
+	private JButton btnDrawGraph_DepthFirst = new JButton("Depth-First traversal");
+	private JButton btnDrawGraph_BreathFirst = new JButton("Breath-First traversal");
+	private JButton btnDrawGraph_Instructor = new JButton("Adjacency List (Given format)");  
+	private JButton btnDrawGraph = new JButton("Adjacency List (Team 2 format)");  
 	private JButton btnGetMaximumFlow = new JButton("Get Maximum Flow");
 	private JButton btnUndoRemoval = new JButton("Undo Removal");
 	private JButton btnClear = new JButton("Clear Graph");
@@ -96,9 +99,14 @@ public class Executable<E> {
 		section2_ShowGraph.setFont(font_Subtitle);
 		panel_Center.add(section2_ShowGraph);
 		panel_Center.add(new JLabel(""));
+		btnDrawGraph_DepthFirst.setFont(font_Content);
+		panel_Center.add(btnDrawGraph_DepthFirst);
+		btnDrawGraph_BreathFirst.setFont(font_Content);
+		panel_Center.add(btnDrawGraph_BreathFirst);
+		btnDrawGraph_Instructor.setFont(font_Content);
+		panel_Center.add(btnDrawGraph_Instructor);
 		btnDrawGraph.setFont(font_Content);
 		panel_Center.add("DrawGraph", btnDrawGraph);
-		panel_Center.add(new JLabel(""));
 		//section 3
 		section3_GetMax.setFont(font_Subtitle);
 		panel_Center.add(section3_GetMax);
