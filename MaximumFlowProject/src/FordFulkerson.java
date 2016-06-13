@@ -166,16 +166,16 @@ public class FordFulkerson<E> extends Graph<E> {
     /* void undoRemove()
      * adds back the last removed vertex
      */
-    public boolean undoRemove() {
+    public Edge<E> undoRemove() {
         if(undoRemoveStack.peek() == null) {
-			return false;
+		return null;
         }
 
         Pair<Vertex<E>, Edge<E>> undo = undoRemoveStack.pop();
         Vertex<E> vertex = undo.first;
         Edge<E> edge = undo.second;
         addEdge(vertex.data, edge.to.data, edge.maxFlow);
-		return true;
+	return edge;
     }
 
     /* boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink)
@@ -327,6 +327,7 @@ public class FordFulkerson<E> extends Graph<E> {
             }
         }
 
+		
         return stringPath;
     }
     
