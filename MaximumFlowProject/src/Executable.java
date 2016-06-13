@@ -22,6 +22,7 @@ public class Executable<E> {
 	private JButton btnExit = new JButton("Exit");
 	private JLabel menuTitle = new JLabel("Team 2: Maximum Flow Problem");
 	private JLabel section1_CreateGraph = new JLabel("Step 1: Create your Graph");
+	private JLabel section1_ReadStatus = new JLabel("  Read status: not started"); // show whether file is readed successfully
 	private JLabel section2_ShowGraph = new JLabel("Step 2: Show your Graph");
 	private JLabel section3_GetMax = new JLabel("Step 3: Get Maximum Flow!");
 	private JLabel section4_Next = new JLabel("Next : ");
@@ -71,8 +72,9 @@ public class Executable<E> {
 		btnReadFromFile.setFont(font_Content);
 		panel_Center.add("ReadFile", btnReadFromFile);
 		btnClear.setFont(font_Content);
-		panel_Center.add("Clear", btnClear);
-		btnAddremoveEdge.setFont(font_Content);
+		section1_ReadStatus.setFont(new Font("Arial", 0, 15));
+		section1_ReadStatus.setForeground(Color.GRAY);
+		panel_Center.add(section1_ReadStatus);
 		panel_Center.add("AddRemove", btnAddremoveEdge);
 		btnUndoRemoval.setFont(font_Content);
 		panel_Center.add("Undo", btnUndoRemoval);
@@ -94,6 +96,8 @@ public class Executable<E> {
 		section4_Next.setFont(font_Subtitle);
 		panel_Center.add(section4_Next);
 		panel_Center.add(new JLabel(""));
+		panel_Center.add("Clear", btnClear);
+		btnAddremoveEdge.setFont(font_Content);
 		btnExit.setFont(font_Content);
 		panel_Center.add("Exit", btnExit);
 		
@@ -286,6 +290,10 @@ public class Executable<E> {
 		Scanner file = openInputFile(filename);
 		if(file == null){
 			printErrMsg("Unable to open " + filename);
+			//show file read successfully msg
+			section1_ReadStatus.setText("  Read status: Unable to open!");
+			section1_ReadStatus.setForeground(Color.RED);
+			section1_ReadStatus.updateUI();
 			return;
 		}
 		while(file.hasNextLine()){
@@ -318,6 +326,10 @@ public class Executable<E> {
 			}
 			failed = false; // Reset for next line
 		}
+		//show file read successfully msg
+		section1_ReadStatus.setText("  Read status: Successfully!");
+		section1_ReadStatus.setForeground(Color.BLUE);
+		section1_ReadStatus.updateUI();
 	}
 	
 	// Sub-Menu for Draw Graph Button
@@ -430,10 +442,10 @@ public class Executable<E> {
 				
 				openDrawGraph();
 				
-				System.out.println("Path from " + sourceOfGraph.data.toString() + " to " + sinkOfGraph.data.toString() + ": " + graph.hasAugmentingPath(sourceOfGraph, sinkOfGraph));
+				System.out.println("Path from [ " + sourceOfGraph.data.toString() + " ] to [ " + sinkOfGraph.data.toString() + " ]: " + graph.hasAugmentingPath(sourceOfGraph, sinkOfGraph)); // add [] to show a better display
 				System.out.println();
 		        	graph.applyFordFulkerson(sourceOfGraph, sinkOfGraph);
-		        	System.out.println("Max flow from s to t: " + graph.getMaxFlow());
+		        	System.out.println("Max flow from source to sink: " + graph.getMaxFlow()); // "from s to t" is changed to "from source to sink"
 				
 				//printMaxFlow(sourceV, sinkV); Print Maxmimum Flow
 			}
