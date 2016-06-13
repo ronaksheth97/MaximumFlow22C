@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 
 public class Driver {
     public static class Direction {
@@ -31,7 +32,7 @@ public class Driver {
     
 	private static void readFromFile(FordFulkerson<String> graph){
 	    //!!!remember to change to your file path
-		String filename = "D:\\java workspace\\TeamProject_Team\\src\\Input file2 - 25 Cities of US and 44 edges.txt"; 
+		String filename = "test.txt"; 
 		boolean failed = false;
 		
 		try{
@@ -126,6 +127,9 @@ public class Driver {
 
         elapsedTime =(double)(stopTime - startTime)/1000000.0;
         System.out.println("\nFord-Fulkerson Time: " + elapsedTime + " milliseconds.");
+        
+        
+        System.out.println("\n\n" + ff2.getGraphMatrix());
         /*
         System.out.println("\n--------------------------------------------\nTESTING EDMONDS-KARP:");
         EdmondsKarp<String> ek = new EdmondsKarp<String>();
