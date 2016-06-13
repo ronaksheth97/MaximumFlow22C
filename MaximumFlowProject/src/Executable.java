@@ -183,7 +183,23 @@ public class Executable<E> {
 		btnUndoRemoval.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				graph.undoRemove();
+				FordFulkerson<String>.Edge<String> edge = graph.undoRemove();
+				if (edge == null) {
+					//update main notice
+					section1_UndoRemoveStatus.setText("  Status: Nothing to undo1!");
+					section1_UndoRemoveStatus.setForeground(Color.RED);
+					section1_UndoRemoveStatus.updateUI();
+				}else {
+					//update main notice
+					String from = edge.from.data;
+					String to = edge.to.data;
+					int maxFlow = edge.maxFlow;
+					
+					section1_UndoRemoveStatus.setText("  Status: from [" + from + "] to [" + to + "], max flow (" + maxFlow + ") is back!");
+					section1_UndoRemoveStatus.setForeground(Color.RED);
+					section1_UndoRemoveStatus.updateUI();
+				}
+				
 			}
 		});
 		
