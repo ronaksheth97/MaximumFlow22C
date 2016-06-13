@@ -112,7 +112,8 @@ public class FordFulkerson<E> extends Graph<E> {
      * @param capacity - the maximum flow of the edge
      */
     public void addEdge(E source, E dest, int capacity) {
-        super.addEdge(source, dest, maxFlow);
+        super.addEdge(source, dest, capacity); // typo problem fixed: it was super.addEdge(source, dest, maxFlow), 
+        					// so capacity for all edges are showed 0.0 at console and ui diplay box
 
         Vertex<E> from = getVertex(source);
         Vertex<E> to = getVertex(dest);
