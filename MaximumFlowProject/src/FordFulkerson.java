@@ -344,20 +344,20 @@ public class FordFulkerson<E> extends Graph<E> {
         	}
     	}
 		
-        matrix += (String.format("%-20s", "VERTEX") + "|| EDGE(S) TO\n");
+        matrix += (String.format("%-25s", "VERTEX") + "|| EDGE(S) TO\n");
     	
     	iterator = edgeTable.entrySet().iterator();
     	while (iterator.hasNext()) {
         	Map.Entry<Vertex<E>, LinkedList<Edge<E>>> pair = iterator.next();
-        	matrix += String.format("%-20s", pair.getKey().data.toString());
+        	matrix += String.format("%-25s", pair.getKey().data.toString());
         	matrix += "|| ";
         	Iterator<Edge<E>> edgeIterator = pair.getValue().iterator();
         	for(int i = 0; i < maxElements; ++i) {
         		if(edgeIterator.hasNext()) {
         			Edge<E> edge = edgeIterator.next();
-        			matrix += String.format("%-19s", edge.to.data.toString());
+        			matrix += String.format("%-24s", (edge.to.data.toString() + " (" + edge.maxFlow + ")"));
         		} else {
-        			matrix += String.format("%-19s", "---");
+        			matrix += String.format("%-24s", "---");
         		}
         		matrix += "| ";
         	}
