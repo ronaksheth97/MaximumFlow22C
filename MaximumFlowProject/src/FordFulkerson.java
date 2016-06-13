@@ -166,15 +166,16 @@ public class FordFulkerson<E> extends Graph<E> {
     /* void undoRemove()
      * adds back the last removed vertex
      */
-    public void undoRemove() {
+    public boolean undoRemove() {
         if(undoRemoveStack.peek() == null) {
-            throw new NullPointerException("ERROR: The undo stack is null. There is nothing to undo.");
+			return false;
         }
 
         Pair<Vertex<E>, Edge<E>> undo = undoRemoveStack.pop();
         Vertex<E> vertex = undo.first;
         Edge<E> edge = undo.second;
         addEdge(vertex.data, edge.to.data, edge.maxFlow);
+		return true;
     }
 
     /* boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink)
@@ -238,7 +239,7 @@ public class FordFulkerson<E> extends Graph<E> {
      * @param sink     - the sink of the flow network
      */
     public void applyFordFulkerson(Vertex<E> source, Vertex<E> sink) {
-    	paths.clear();
+		paths.clear();
         maxFlow = 0;
         if(hasAugmentingPath(source, sink)) {
             Iterator<LinkedList<Vertex<E>>> listIterator = paths.iterator();
@@ -335,26 +336,33 @@ public class FordFulkerson<E> extends Graph<E> {
     	
     	Iterator<Map.Entry<Vertex<E>, LinkedList<Edge<E>>>> iterator = edgeTable.entrySet().iterator();
     	while(iterator.hasNext()) {
-        	Map.Entry pair = (Map.Entry) iterator.next();
+        	Map.Entry<Vertex<E>, LinkedList<Edge<E>>> pair = iterator.next();
         	LinkedList<Edge<E>> list = pair.getValue();
         	if(list.size() > maxElements) {
         		maxElements = list.size();
         	}
     	}
+		
+        matrix += (String.format("%-20s", "Vertex") + "| " + String.format("%-19s", "Edge(s)"));
+		for(int i = 0; i < maxElements - 1; ++i) {
+			matrix += "                    ";
+		}
+		matrix += "|\n";
     	
+    	iterator = edgeTable.entrySet().iterator();
     	while (iterator.hasNext()) {
-        	Map.Entry pair = (Map.Entry) iterator.next();
-        	matrix += String.format("%20s", pair.getKey());
+        	Map.Entry<Vertex<E>, LinkedList<Edge<E>>> pair = iterator.next();
+        	matrix += String.format("%-20s", pair.getKey().data.toString());
         	matrix += "| ";
-        	LinkedList<Edge<E>> edgeIterator = pair.getValue().iterator();
+        	Iterator<Edge<E>> edgeIterator = pair.getValue().iterator();
         	for(int i = 0; i < maxElements; ++i) {
         		if(edgeIterator.hasNext()) {
         			Edge<E> edge = edgeIterator.next();
-        			matrix += String.format("%20s", edge.to.data.toString());
+        			matrix += String.format("%-19s", edge.to.data.toString());
         		} else {
-        			matrix += "                    ";
+        			matrix += String.format("%-19s", "---");
         		}
-        		matrix += "|";
+        		matrix += "| ";
         	}
         	matrix += "\n";
     	}
