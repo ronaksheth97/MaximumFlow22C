@@ -168,7 +168,7 @@ public class Executable<E> {
 		btnDrawGraph.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				 openDrawGraph();
+				 openDrawGraph(1);
 			}
 		});
 		
@@ -436,7 +436,7 @@ public class Executable<E> {
 	}
 	
 	// Sub-Menu for Draw Graph Button
-	private void openDrawGraph(){
+	private void openDrawGraph(int type){
 		JFrame subMenu = new JFrame();
 		JButton btnExport = new JButton("Export");
 		final JTextArea textArea = new JTextArea(50, 10);
@@ -473,7 +473,9 @@ public class Executable<E> {
 		subMenu.add(new JScrollPane(textArea), constraints);
 		
 		//displayGraph();
-		graph.showAdjTable();
+		if(type == 1){
+			System.out.print(graph.getGraphMatrix());
+		}
 		// Test output to Export
 		//System.out.println(textArea.getText());
 		
@@ -543,7 +545,7 @@ public class Executable<E> {
 				
 				subMenu.dispose();
 				
-				openDrawGraph();
+				openDrawGraph(0);
 				
 				System.out.println("Path from [ " + sourceOfGraph.data.toString() + " ] to [ " + sinkOfGraph.data.toString() + " ]: " + graph.hasAugmentingPath(sourceOfGraph, sinkOfGraph)); // add [] to show a better display
 				System.out.println();
