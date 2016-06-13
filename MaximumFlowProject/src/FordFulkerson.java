@@ -355,7 +355,8 @@ public class FordFulkerson<E> extends Graph<E> {
         	for(int i = 0; i < maxElements; ++i) {
         		if(edgeIterator.hasNext()) {
         			Edge<E> edge = edgeIterator.next();
-        			matrix += String.format("%-24s", (edge.to.data.toString() + " (" + edge.maxFlow + ")"));
+					String temp = edge.to.data.toString() + " (" + edge.maxFlow + ")";
+        			matrix += String.format("%-24s", temp);
         		} else {
         			matrix += String.format("%-24s", "---");
         		}
