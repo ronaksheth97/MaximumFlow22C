@@ -344,7 +344,7 @@ public class FordFulkerson<E> extends Graph<E> {
         	}
     	}
 		
-        matrix += (String.format("%-20s", "VERTEX") + "|| EDGE(S)\n");
+        matrix += (String.format("%-20s", "VERTEX") + "|| EDGE(S) TO\n");
     	
     	iterator = edgeTable.entrySet().iterator();
     	while (iterator.hasNext()) {
