@@ -28,7 +28,8 @@ public class Executable<E> {
 	private Font font_Content = new Font("Arial", 0, 15);
 	private Font font_Subtitle = new Font("Arial", 1, 20);
 
-	FordFulkerson<E> graph;
+	// type E is specified to String when class is instantiated
+	FordFulkerson<String> graph; // Graph
 	public static Scanner userScanner = new Scanner(System.in);
 
 	public Executable() {
@@ -36,7 +37,7 @@ public class Executable<E> {
 	}
 
 	private void init() {
-		graph = new FordFulkerson<E>();
+		graph = new FordFulkerson<String>(); // E is specified to String
 		
 /*Update main menu display of this part by following block as commented
 		frame = new JFrame();
@@ -213,8 +214,8 @@ public class Executable<E> {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String err = "Invalid Capacity";
-				E cityF = (E) vertex1.getText();
-				E cityT = (E) vertex2.getText();
+				String cityF = vertex1.getText(); // E is specified to String
+				String cityT = vertex2.getText(); // E is specified to String
 				String maxF = cap.getText();
 				int maxFlow;
 				try {
@@ -240,8 +241,8 @@ public class Executable<E> {
 		remove.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				E cityF = (E) vertex1.getText();
-				E cityT = (E) vertex2.getText();
+				String cityF = vertex1.getText(); // E is specified to String
+				String cityT = vertex2.getText(); // E is specified to String
 				graph.remove(cityF, cityT);
 				System.out.println(cityF + " to " + cityT + " removed"); // Temp to test values returned
 				subMenu.dispose();
@@ -297,9 +298,7 @@ public class Executable<E> {
 			}
 			else{
 				String from = aline[0];
-				E fromE = (E) from;
 				String to = aline[1];
-				E toE = (E) to;
 				String caps = aline[2];
 				int cap = -1;
 				try {
@@ -314,7 +313,7 @@ public class Executable<E> {
 					failed = true;
 				}
 				if(!failed){ // Do not add if failed
-					graph.addEdge(fromE, toE, cap);
+					graph.addEdge(from, to, cap);
 				}
 			}
 			failed = false; // Reset for next line
@@ -424,20 +423,17 @@ public class Executable<E> {
 			public void actionPerformed(ActionEvent e){
 				String sourceS = source.getText();
 				String sinkS = sink.getText();
-				E sourceE = (E) sourceS;
-				E sinkE = (E) sinkS;
-				Vertex<E> from = graph.getVertex(sourceE);
-				Vertex<E> to = graph.getVertex(sinkE);
-				
+				Vertex<String> sourceOfGraph = graph.getVertex(sourceS); // local variable "from" is changed to "sourceOfGraph"
+				Vertex<String> sinkOfGraph = graph.getVertex(sinkS); // local variable "to" is changed to "sinkOfGraph"
 				
 				subMenu.dispose();
 				
 				openDrawGraph();
 				
-				System.out.println("Path from " + from.data.toString() + " to " + to.data.toString() + ": " + graph.hasAugmentingPath(from, to));
+				System.out.println("Path from " + sourceOfGraph.data.toString() + " to " + sinkOfGraph.data.toString() + ": " + graph.hasAugmentingPath(sourceOfGraph, sinkOfGraph));
 				System.out.println();
-		        graph.applyFordFulkerson(from, to);
-		        System.out.println("Max flow from s to t: " + graph.getMaxFlow());
+		        	graph.applyFordFulkerson(sourceOfGraph, sinkOfGraph);
+		        	System.out.println("Max flow from s to t: " + graph.getMaxFlow());
 				
 				//printMaxFlow(sourceV, sinkV); Print Maxmimum Flow
 			}
@@ -445,7 +441,7 @@ public class Executable<E> {
 		subMenu.setVisible(true);
 	}
 	
-	private void printMaxFlow(Vertex<E> source, Vertex<E> sink){
+	private void printMaxFlow(Vertex<String> source, Vertex<String> sink){ // E is specified to String
 		graph.applyFordFulkerson(source, sink);
 		int maxFlow = graph.getMaxFlow();
 		System.out.println("Maximum Flow: " + maxFlow);
