@@ -243,7 +243,32 @@ public class Graph<E>
 
    public void depthFirstTraversalHelper(Vertex<E> startVertex, Visitor<E> visitor)
    {
-        // YOU COMPLETE THIS (USE THE ALGORITHM GIVEN FOR LESSON 11 EXERCISE)
+        // YOU COMPLETE THIS (USE THE ALGORITHM GIVEN FOR LESSON 11 EXERCISE
+    	//DEPTH FIRST SEARCH TRAVERAL ALGORITHM:
+	//DFS(G,v):
+	//	label v as visited
+	//	for all edges from v to w in G.adjacentEdges(v) do
+	//		if vertex w is not labeled as discovered then
+	//			recursively call DFS(G,w)
+	//		end if
+	//	end for
+	   
+	E startData = startVertex.getData();
+	startVertex.visit(); // marked as visited for traverse purpose
+	visitor.visit(startData); // customer designed visit action, like print...
+	   
+	Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iter = startVertex.iterator();//all elements in startVertex's adjList
+	   
+	Entry<E, Pair<Vertex<E>, Double>> nextEntry = null;
+	   
+	for (nextEntry = iter.next();iter.hasNext();)//all elements in startVertex's adjList
+	{
+		Vertex<E> neighborVertex = nextEntry.getValue().first;
+		if(!neighborVertex.visited)
+		{
+			depthFirstTraversalHelper(neighborVertex, visitor);
+		} //end if
+	} //end for 
    }
 
 
@@ -251,6 +276,37 @@ public class Graph<E>
    //         WRITE THE GRAPH's vertices and its
    //         adjacency list TO A TEXT FILE (SUGGEST TO PASS AN
    //        ALREADY OPEN PrintWriter TO THIS) !
+   public void writeGraphToFile(PrintWriter writer)
+   {
+	   Iterator<Map.Entry<E, Vertex<E>>> iterVertex = this.vertexSet.entrySet().iterator();
+	   
+	   Vertex<E> nextVertex = null;
+	   StringBuilder printString = null;
+	   //traverse each vertex
+	   while(iterVertex.hasNext())
+	   {
+		   nextVertex = iterVertex.next().getValue();
+		   //create a stringBuilder for each vertex
+		   printString = new StringBuilder();
+		   //add this vertex's data to the stringBuilder
+		   printString.append("Vertex with data: [ " + nextVertex.data + " ] and its adj List: ");
+		   
+		   //traverse each edge of this vertex
+		   Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iterNeighbor = nextVertex.iterator();
+		   Entry<E, Pair<Vertex<E>, Double>> nextEntry = null;
+		   Pair<Vertex<E>, Double> pair = null;
+		   
+		   while(iterNeighbor.hasNext())
+		   {
+			   nextEntry = iterNeighbor.next();
+			   pair = nextEntry.getValue();
+			   //add each neighbor and cost to the stringBuilder
+			   printString.append("[ " + pair.first.data + " ](" + String.format("%3.1f", pair.second) + ") ");
+		   }
+		   //writer the stringBuilder to file
+		   writer.println(printString.toString()); // !!!must use println/printf/format to flush
+	   }   
+   }
 
 
 }
