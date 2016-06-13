@@ -51,6 +51,7 @@ public class Driver {
         elapsedTime =(double)(stopTime - startTime)/1000000.0;
         System.out.println("\nFord-Fulkerson Time: " + elapsedTime + " milliseconds.");
 
+        /*
         System.out.println("\n--------------------------------------------\nTESTING EDMONDS-KARP:");
         EdmondsKarp<String> ek = new EdmondsKarp<String>();
         for(int i = 0; i < size; i++) {
@@ -74,6 +75,7 @@ public class Driver {
 
         elapsedTime =(double)(stopTime - startTime)/1000000.0;
         System.out.println("\nEdmonds-Karp Time: " + elapsedTime + " milliseconds.");
+        */
     }
 }
 
