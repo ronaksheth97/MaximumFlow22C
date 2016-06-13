@@ -168,14 +168,14 @@ public class FordFulkerson<E> extends Graph<E> {
      */
     public Edge<E> undoRemove() {
         if(undoRemoveStack.peek() == null) {
-		return null;
+			return null;
         }
 
         Pair<Vertex<E>, Edge<E>> undo = undoRemoveStack.pop();
         Vertex<E> vertex = undo.first;
         Edge<E> edge = undo.second;
         addEdge(vertex.data, edge.to.data, edge.maxFlow);
-	return edge;
+		return edge;
     }
 
     /* boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink)
@@ -344,13 +344,13 @@ public class FordFulkerson<E> extends Graph<E> {
         	}
     	}
 		
-        matrix += (String.format("%-20s", "VERTEX") + "| " + String.format("%-19s", "EDGE(S)") + "\n");
+        matrix += (String.format("%-20s", "VERTEX") + "|| EDGE(S)\n");
     	
     	iterator = edgeTable.entrySet().iterator();
     	while (iterator.hasNext()) {
         	Map.Entry<Vertex<E>, LinkedList<Edge<E>>> pair = iterator.next();
         	matrix += String.format("%-20s", pair.getKey().data.toString());
-        	matrix += "| ";
+        	matrix += "|| ";
         	Iterator<Edge<E>> edgeIterator = pair.getValue().iterator();
         	for(int i = 0; i < maxElements; ++i) {
         		if(edgeIterator.hasNext()) {
