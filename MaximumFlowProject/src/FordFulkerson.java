@@ -330,17 +330,30 @@ public class FordFulkerson<E> extends Graph<E> {
     
     public String getGraphMatrix() {
     	String matrix = "";
+    	int maxElements = 0;
     	
     	Iterator<Map.Entry<Vertex<E>, LinkedList<Edge<E>>>> iterator = edgeTable.entrySet().iterator();
+    	while(iterator.hasNext()) {
+        	Map.Entry pair = (Map.Entry) iterator.next();
+        	LinkedList<Edge<E>> list = pair.getValue();
+        	if(list.size() > maxElements) {
+        		maxElements = list.size();
+        	}
+    	}
+    	
     	while (iterator.hasNext()) {
-        	Map.Entry pair = (Map.Entry)it.next();
-        	matrix += String.format("%20s", pair.key());
+        	Map.Entry pair = (Map.Entry) iterator.next();
+        	matrix += String.format("%20s", pair.getKey());
         	matrix += "| ";
-        	LinkedList<Edge<E>> edgeIterator = pair.value().iterator();
-        	while(edgeIterator.hasNext()) {
-        		Edge<E> edge = edgeIterator.next();
-        		matrix += String.format("%20s", edge.to.data.toString());
-        		matrix += "| ";
+        	LinkedList<Edge<E>> edgeIterator = pair.getValue().iterator();
+        	for(int i = 0; i < maxElements; ++i) {
+        		if(edgeIterator.hasNext()) {
+        			Edge<E> edge = edgeIterator.next();
+        			matrix += String.format("%20s", edge.to.data.toString());
+        		} else {
+        			matrix += "                    ";
+        		}
+        		matrix += "|";
         	}
         	matrix += "\n";
     	}
