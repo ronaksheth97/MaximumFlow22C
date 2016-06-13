@@ -67,7 +67,7 @@ public class Executable<E> {
 		menuTitle.setFont(new Font("Arial",Font.BOLD, 30));
 		panel_North.add(menuTitle);
 		
-		panel_Center = new JPanel(new GridLayout(9,1));
+		panel_Center = new JPanel(new GridLayout(11,1));
 		panel_Center.setBackground(new Color(255, 255, 255));
 		section1_CreateGraph.setFont(font_Subtitle);
 		//section 1 - title

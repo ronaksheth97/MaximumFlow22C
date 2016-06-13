@@ -1,10 +1,44 @@
-s, a, 9
-a, c, 8
-c, t, 10
-s, b, 9
-b, d, 3
-d, t, 7
-a, b, 10
-b, c, 1
-d, c, 8
-f, g, 10
+Seattle, Portland, 65
+Seattle, Las Vegas, 78
+Seattle, Salt Lake City, 66
+Seattle, Denver, 42
+Seattle, Minneapolis, 97
+Portland, San Francisco, 81
+San Francisco, Salt Lake City, 21
+San Francisco, Los Angeles, 62
+Los Angeles, San Diego, 55
+Los Angeles, Phoenix, 39
+San Diego, Phoenix, 71
+Las Vegas, Los Angeles, 174
+Las Vegas, Phoenix, 27
+Las Vegas, Denver, 39
+Salt Lake City, Las Vegas, 85
+Salt Lake City, Denver, 192
+Minneapolis, Salt Lake City, 88
+Minneapolis, Chicago, 76
+Denver, Phoenix, 34
+Denver, Minneapolis, 110
+Denver, Chicago, 159
+Denver, Houston, 66
+Denver, Memphis, 120
+Phoenix, Houston, 105
+Chicago, Detroit, 149
+Chicago, Memphis, 33
+Detroit, Cleveland, 56
+Detroit, Nashville, 126
+Cleveland, Boston, 88
+Cleveland, Philadelphia, 36
+Cleveland, Columbia, 22
+Boston, New York, 45
+New York, Philadelphia, 31
+Philadelphia, Washington DC, 137
+Washington DC, Columbia, 49
+Columbia, Atlanta, 19
+Columbia, Orlando, 65
+Nashville, Atlanta, 59
+Atlanta, Orlando, 83
+Memphis, Orlando, 42
+Memphis, Miami, 77
+Memphis, Houston, 38
+Houston, Miami, 187
+Orlando, Miami, 233
