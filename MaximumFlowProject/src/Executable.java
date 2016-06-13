@@ -176,6 +176,10 @@ public class Executable<E> {
 				int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to empty the graph?","Warning", dialogButton);
 				if(dialogResult == JOptionPane.YES_OPTION){
 					graph.clear();
+					//update UI to initialization
+					section1_ReadStatus.setText("  Read status: not started");
+					section1_ReadStatus.setForeground(Color.GRAY);
+					section1_ReadStatus.updateUI();
 				}
 				
 			}
