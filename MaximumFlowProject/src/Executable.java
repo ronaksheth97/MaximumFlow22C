@@ -22,10 +22,14 @@ public class Executable<E> {
 	private JButton btnExit = new JButton("Exit");
 	private JLabel menuTitle = new JLabel("Team 2: Maximum Flow Problem");
 	private JLabel section1_CreateGraph = new JLabel("Step 1: Create your Graph");
-	private JLabel section1_ReadStatus = new JLabel("  Read status: not started"); // show whether file is readed successfully
+	private JLabel section1_ReadStatus = new JLabel("  Status: ");
+	private JLabel section1_AddOrRemoveStatus = new JLabel("  Status: ");
+	private JLabel section1_UndoRemoveStatus = new JLabel("  Status: ");
 	private JLabel section2_ShowGraph = new JLabel("Step 2: Show your Graph");
 	private JLabel section3_GetMax = new JLabel("Step 3: Get Maximum Flow!");
+	private JLabel section3_MaxFlowStatus = new JLabel("  Status: ");
 	private JLabel section4_Next = new JLabel("Next : ");
+	private JLabel section4_ClearStatus = new JLabel("  Status: ");
 	private Font font_Content = new Font("Arial", 0, 15);
 	private Font font_Subtitle = new Font("Arial", 1, 20);
 
@@ -66,20 +70,30 @@ public class Executable<E> {
 		panel_Center = new JPanel(new GridLayout(9,1));
 		panel_Center.setBackground(new Color(255, 255, 255));
 		section1_CreateGraph.setFont(font_Subtitle);
-		//section 1
+		//section 1 - title
 		panel_Center.add(section1_CreateGraph);
 		panel_Center.add(new JLabel(""));
+		//section 1 - read file
 		btnReadFromFile.setFont(font_Content);
 		panel_Center.add("ReadFile", btnReadFromFile);
-		btnClear.setFont(font_Content);
 		section1_ReadStatus.setFont(new Font("Arial", 0, 15));
 		section1_ReadStatus.setForeground(Color.GRAY);
 		panel_Center.add(section1_ReadStatus);
+		//section 1 - add or remove
+		btnAddremoveEdge.setFont(font_Content);
 		panel_Center.add("AddRemove", btnAddremoveEdge);
+		section1_AddOrRemoveStatus.setFont(new Font("Arial", 0, 15));
+		section1_AddOrRemoveStatus.setForeground(Color.GRAY);
+		panel_Center.add(section1_AddOrRemoveStatus);
+		//section 1 - undo remove
 		btnUndoRemoval.setFont(font_Content);
 		panel_Center.add("Undo", btnUndoRemoval);
-		section2_ShowGraph.setFont(font_Subtitle);
+		section1_UndoRemoveStatus.setFont(new Font("Arial", 0, 15));
+		section1_UndoRemoveStatus.setForeground(Color.GRAY);
+		panel_Center.add(section1_UndoRemoveStatus);
+		
 		//section 2
+		section2_ShowGraph.setFont(font_Subtitle);
 		panel_Center.add(section2_ShowGraph);
 		panel_Center.add(new JLabel(""));
 		btnDrawGraph.setFont(font_Content);
@@ -91,16 +105,21 @@ public class Executable<E> {
 		panel_Center.add(new JLabel(""));	
 		btnGetMaximumFlow.setFont(font_Content);
 		panel_Center.add("GetMax", btnGetMaximumFlow);
-		panel_Center.add(new JLabel(""));		
+		section3_MaxFlowStatus.setFont(new Font("Arial", 0, 15));
+		section3_MaxFlowStatus.setForeground(Color.GRAY);
+		panel_Center.add(section3_MaxFlowStatus);	
 		//section 4
 		section4_Next.setFont(font_Subtitle);
 		panel_Center.add(section4_Next);
 		panel_Center.add(new JLabel(""));
+		btnClear.setFont(font_Content);
 		panel_Center.add("Clear", btnClear);
-		btnAddremoveEdge.setFont(font_Content);
+		section4_ClearStatus.setFont(font_Content);
+		section4_ClearStatus.setForeground(Color.GRAY);
+		panel_Center.add(section4_ClearStatus);
 		btnExit.setFont(font_Content);
 		panel_Center.add("Exit", btnExit);
-		
+
 		panel_West = new JPanel();
 		panel_West.setBackground(new Color(255, 255, 255));
 		panel_West.add(new Label("  "));
@@ -177,9 +196,25 @@ public class Executable<E> {
 				if(dialogResult == JOptionPane.YES_OPTION){
 					graph.clear();
 					//update UI to initialization
-					section1_ReadStatus.setText("  Read status: not started");
+					section1_ReadStatus.setText("  Status: ");
 					section1_ReadStatus.setForeground(Color.GRAY);
 					section1_ReadStatus.updateUI();
+					
+					section1_AddOrRemoveStatus.setText("  Status: ");
+					section1_AddOrRemoveStatus.setForeground(Color.GRAY);
+					section1_AddOrRemoveStatus.updateUI();
+					
+					section1_UndoRemoveStatus.setText("  Status: ");
+					section1_UndoRemoveStatus.setForeground(Color.GRAY);
+					section1_UndoRemoveStatus.updateUI();
+					
+					section3_MaxFlowStatus.setText("  Status: ");
+					section3_MaxFlowStatus.setForeground(Color.GRAY);
+					section3_MaxFlowStatus.updateUI();
+					
+					section4_ClearStatus.setText("  Status: Graph is all cleared!");
+					section4_ClearStatus.setForeground(Color.BLUE);
+					section4_ClearStatus.updateUI();
 				}
 				
 			}
@@ -231,10 +266,28 @@ public class Executable<E> {
 				} catch (Exception inv) { // If unable to parse input as int,
 											// close window and return
 					printErrMsg(err);
+					// update msg on main menu
+					section1_AddOrRemoveStatus.setText("  Status: Unable to add! Not integer.");
+					section1_AddOrRemoveStatus.setForeground(Color.RED);
+					section1_AddOrRemoveStatus.updateUI();
+					
+					section3_MaxFlowStatus.setText("  Status: ");
+					section3_MaxFlowStatus.setForeground(Color.GRAY);
+					section3_MaxFlowStatus.updateUI();
+
 					return;
 				}
 				if(maxFlow < 1){
 					printErrMsg(err);
+					// update msg on main menu
+					section1_AddOrRemoveStatus.setText("  Status: Unable to add! Max flow < 1.");
+					section1_AddOrRemoveStatus.setForeground(Color.RED);
+					section1_AddOrRemoveStatus.updateUI();
+					
+					section3_MaxFlowStatus.setText("  Status: ");
+					section3_MaxFlowStatus.setForeground(Color.GRAY);
+					section3_MaxFlowStatus.updateUI();
+
 					return;
 				}
 				
@@ -242,6 +295,15 @@ public class Executable<E> {
 				
 
 				System.out.println(cityF + " to " + cityT + " with max flow of " + maxFlow + " added"); // Temp to test values returned
+				// update msg on main menu
+				section1_AddOrRemoveStatus.setText("  Status: [" + cityF + "] to [" + cityT + "] , max flow (" + maxFlow + ") added");
+				section1_AddOrRemoveStatus.setForeground(Color.BLUE);
+				section1_AddOrRemoveStatus.updateUI();
+				
+				section3_MaxFlowStatus.setText("  Status: ");
+				section3_MaxFlowStatus.setForeground(Color.GRAY);
+				section3_MaxFlowStatus.updateUI();
+
 				subMenu.dispose();
 			}
 		});
@@ -253,6 +315,15 @@ public class Executable<E> {
 				String cityT = vertex2.getText(); // E is specified to String
 				graph.remove(cityF, cityT);
 				System.out.println(cityF + " to " + cityT + " removed"); // Temp to test values returned
+				//update menu notice
+				section1_AddOrRemoveStatus.setText("  Status: " + cityF + " to " + cityT + " removed");
+				section1_AddOrRemoveStatus.setForeground(Color.BLUE);
+				section1_AddOrRemoveStatus.updateUI();
+				
+				section3_MaxFlowStatus.setText("  Status: ");
+				section3_MaxFlowStatus.setForeground(Color.GRAY);
+				section3_MaxFlowStatus.updateUI();
+
 				subMenu.dispose();
 			}
 		});
@@ -295,9 +366,13 @@ public class Executable<E> {
 		if(file == null){
 			printErrMsg("Unable to open " + filename);
 			//show file read successfully msg
-			section1_ReadStatus.setText("  Read status: Unable to open!");
+			section1_ReadStatus.setText("  Status: Unable to open!");
 			section1_ReadStatus.setForeground(Color.RED);
 			section1_ReadStatus.updateUI();
+			
+			section3_MaxFlowStatus.setText("  Status: ");
+			section3_MaxFlowStatus.setForeground(Color.GRAY);
+			section3_MaxFlowStatus.updateUI();
 			return;
 		}
 		while(file.hasNextLine()){
@@ -329,6 +404,14 @@ public class Executable<E> {
 				}
 			}
 			failed = false; // Reset for next line
+			//show file read successfully msg
+			section1_ReadStatus.setText("  Status: Read successfully!");
+			section1_ReadStatus.setForeground(Color.BLUE);
+			section1_ReadStatus.updateUI();
+		
+			section3_MaxFlowStatus.setText("  Status: ");
+			section3_MaxFlowStatus.setForeground(Color.GRAY);
+			section3_MaxFlowStatus.updateUI();
 		}
 		//show file read successfully msg
 		section1_ReadStatus.setText("  Read status: Successfully!");
@@ -450,7 +533,11 @@ public class Executable<E> {
 				System.out.println();
 		        	graph.applyFordFulkerson(sourceOfGraph, sinkOfGraph);
 		        	System.out.println("Max flow from source to sink: " + graph.getMaxFlow()); // "from s to t" is changed to "from source to sink"
-				
+				//update menu notice
+				section3_MaxFlowStatus.setText("  Max flow from [" + sourceOfGraph.data + "] to [" + sinkOfGraph.data + "] = " + graph.getMaxFlow());
+			        section3_MaxFlowStatus.setForeground(Color.BLUE);
+			        section3_MaxFlowStatus.updateUI();
+
 				//printMaxFlow(sourceV, sinkV); Print Maxmimum Flow
 			}
 		});
