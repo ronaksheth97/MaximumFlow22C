@@ -1,32 +1,17 @@
 import java.util.*;
 import java.util.Map.Entry;
 
-// TO DO:
-// 1. fix hasAugmentingPath (DONE)
-// 2. add undoRemoveStack and implement the removeEdge functions by calling super() (DONE)
-// 3. add edgeSet functionality (DONE)
-// 4. write FordFulkerson code (DONE)
-
-public class FordFulkerson<E> extends Graph<E> {
+public class EdmondsKarp<E> extends Graph<E> {
     private int maxFlow;
     private HashMap<Vertex<E>, LinkedList<Edge<E>>> edgeTable; // separate chaining
     private LinkedStack<Pair<Vertex<E>, Edge<E>>> undoRemoveStack;
-    private LinkedList<LinkedList<Vertex<E>>> paths;
-
-    /*
-    public FordFulkerson(Vertex<E> _source, Vertex<E> _sink) {
-        super();
-        maxFlow = 0;
-
-        // applyFordFulkerson(_source, _sink);
-    }
-    */
+    private HashMap<Vertex<E>, Edge<E>> backwardsTable;
     
-    public FordFulkerson(){
+    public EdmondsKarp(){
     	super();
     	maxFlow = 0;
-        paths = new LinkedList<LinkedList<Vertex<E>>>();
         edgeTable = new HashMap<Vertex<E>, LinkedList<Edge<E>>>();
+        backwardsTable = new HashMap<Vertex<E>, Edge<E>>();
         undoRemoveStack = new LinkedStack<Pair<Vertex<E>, Edge<E>>>();
     }
 
@@ -81,7 +66,6 @@ public class FordFulkerson<E> extends Graph<E> {
 
     public void clear() {
         super.clear();
-        paths.clear();
         edgeTable.clear();
 
         while(undoRemoveStack.peek() != null) {
@@ -96,18 +80,14 @@ public class FordFulkerson<E> extends Graph<E> {
         Vertex<E> from = getVertex(source);
         Vertex<E> to = getVertex(dest);
 
-        addEdgeHelper(from, to, capacity);
-    }
-
-    private void addEdgeHelper(Vertex<E> key, Vertex<E> dest, int capacity) {
         LinkedList<Edge<E>> edgeList;
-        Edge<E> edge = new Edge<E>(key, dest, capacity);
-        if(!edgeTable.containsKey(key)) {
+        Edge<E> edge = new Edge<E>(from, to, capacity);
+        if(!edgeTable.containsKey(from)) {
             edgeList = new LinkedList<Edge<E>>();
             edgeList.add(edge);
-            edgeTable.put(key, edgeList);
+            edgeTable.put(from, edgeList);
         } else {
-            edgeList = edgeTable.get(key);
+            edgeList = edgeTable.get(from);
             edgeList.add(edge);
         }
     }
@@ -123,13 +103,6 @@ public class FordFulkerson<E> extends Graph<E> {
             throw new IllegalArgumentException("ERROR: The source vertex of the element to be removed is null or does not exist in the graph.");
         }
 
-        removeHelper(source, dest);
-        // removeHelper(dest, source);
-        
-        return super.remove(start, end);
-    }
-
-    private void removeHelper(Vertex<E> source, Vertex<E> dest) {
         LinkedList<Edge<E>> tempList = edgeTable.get(source);
         if(tempList.isEmpty() || tempList == null) {
             throw new NullPointerException("ERROR: Edge associated with the vertex does not exist.");
@@ -143,6 +116,8 @@ public class FordFulkerson<E> extends Graph<E> {
                 iterator.remove();
             }
         }
+        
+        return super.remove(start, end);
     }
 
     public void undoRemove() {
@@ -156,133 +131,52 @@ public class FordFulkerson<E> extends Graph<E> {
         addEdge(vertex.data, edge.to.data, edge.maxFlow);
     }
 
+    // uses a breadth-first traversal to find the shortest path (based on the number of nodes)
     public boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink) {
-        if(source == null) {
-            throw new NullPointerException("ERROR: The source parameter cannot be null.");
-        }
-
-        if(sink == null) {
-            throw new NullPointerException("ERROR: The sink parameter cannot be null.");
-        }
-
         if(source.equals(sink)) {
-            throw new IllegalArgumentException("ERROR: The source and sink cannot be the same.");
+            throw new IllegalArgumentException("ERROR: Invalid argument. The source must be a different node than the sink.");
         }
 
-        paths.clear();
-        unvisitVertices();
-        hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
+        LinkedQueue<Vertex<E>> queue = new LinkedQueue<Vertex<E>>();
+        queue.enqueue(source);
+        source.visit();
+        while(!queue.isEmpty() && !sink.isVisited()) {
+            Vertex<E> vertex = queue.dequeue();
+
+            Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iterator = vertex.iterator();
+
+
+		    while(iterator.hasNext()) {
+			    Entry<E, Pair<Vertex<E>, Double>> entry = iterator.next();
+			    Vertex<E> neighbor = entry.getValue().first;
+                Edge<E> edge = getEdge(vertex, neighbor);
+			    if(!neighbor.isVisited() && edge.getResidualCapacity(neighbor) > 0) {
+				    queue.enqueue(neighbor);
+				    neighbor.visit();
+                    backwardsTable.put(neighbor, edge);
+                    System.out.println("Key: " + neighbor.data.toString() + ". Data: Edge from " + edge.from.data.toString() + " to " + edge.to.data.toString());
+			    }
+		    }
+        }
+        
 
         return sink.isVisited();
     }
 
-    private void hasAugmentingPathRecursive(Vertex<E> source, Vertex<E> sink, LinkedList<Vertex<E>> currPath) {
-        currPath.add(source);
-        source.visit();
-
-        if(source.equals(sink)) {
-            paths.add(new LinkedList<Vertex<E>>(currPath));
-            currPath.remove(source);
-            return;
-        }
-
-        LinkedList<Edge<E>> edgeList = edgeTable.get(source);
-        Iterator<Edge<E>> iterator = edgeList.iterator();
-        while(iterator.hasNext()) {
-            Edge<E> edge = iterator.next();
-            Vertex<E> opposite = edge.getOpposite(source);
-            if(!currPath.contains(opposite) && edge.getResidualCapacity(opposite) > 0) {
-                hasAugmentingPathRecursive(opposite, sink, currPath);
-            }
-        }
-
-        currPath.remove(source);
-    }
-
-    public void applyFordFulkerson(Vertex<E> source, Vertex<E> sink) {
+    public void applyEdmondsKarp(Vertex<E> source, Vertex<E> sink) {
         maxFlow = 0;
-        if(hasAugmentingPath(source, sink)) {
-            Iterator<LinkedList<Vertex<E>>> listIterator = paths.iterator();
-
-            while(listIterator.hasNext()) {
-                LinkedList<Vertex<E>> path = listIterator.next();
-                LinkedList<Vertex<E>> flowPath = new LinkedList<Vertex<E>>(path);
-                Iterator<Vertex<E>> pathIterator = path.iterator();
-
-                Vertex<E> prev = null, curr;
-                int bottleneck = Integer.MAX_VALUE;
-                while(pathIterator.hasNext()) {
-                    curr = pathIterator.next();
-
-                    if(prev != null) {
-                        Edge<E> edge = getEdge(prev, curr);
-                        if(edge != null) {
-                            bottleneck = Math.min(bottleneck, edge.getResidualCapacity(curr));
-                        }
-                    }
-
-                    prev = curr;
-                }
-
-                // repeat but this time make each currFlow equal to the bottleneck
-                prev = null;
-                curr = null;
-                Iterator<Vertex<E>> flowPathIterator = flowPath.iterator();
-                while(flowPathIterator.hasNext()) {
-                    curr = flowPathIterator.next();
-
-                    if(prev != null) {
-                        Edge<E> edge = getEdge(prev, curr);
-                        if(edge != null) {
-                            edge.setCurrFlow(curr, bottleneck);
-                        }
-                    }
-
-                    prev = curr;
-                }
-
-                maxFlow += bottleneck;
+        while(hasAugmentingPath(source, sink)) {
+            int bottleneck = Integer.MAX_VALUE;
+            for(Vertex<E> vertex = sink; !vertex.equals(source); vertex = backwardsTable.get(vertex).getOpposite(vertex)) {
+                bottleneck = Math.min(bottleneck, backwardsTable.get(vertex).getResidualCapacity(vertex));
             }
-        }
-    }
 
-    public String getPathsToString() {
-        String stringPath = "";
-        if(!paths.isEmpty()) {
-            Iterator<LinkedList<Vertex<E>>> listIterator = paths.iterator();
-
-            while(listIterator.hasNext()) {
-                LinkedList<Vertex<E>> path = listIterator.next();
-                LinkedList<Vertex<E>> flowPath = new LinkedList<Vertex<E>>(path);
-                Iterator<Vertex<E>> pathIterator = path.iterator();
-
-                Vertex<E> prev = null, curr;
-                int bottleneck = Integer.MAX_VALUE;
-                while(pathIterator.hasNext()) {
-                    curr = pathIterator.next();
-
-                    stringPath += curr.data.toString();
-                    if(pathIterator.hasNext()) {
-                        stringPath += " -> ";
-                    }
-
-                    if(prev != null) {
-                        Edge<E> edge = getEdge(prev, curr);
-                        if(edge != null) {
-                            bottleneck = Math.min(bottleneck, edge.getResidualCapacity(curr));
-                        }
-                    }
-
-                    prev = curr;
-                }
-
-                if(listIterator.hasNext()) {
-                    stringPath += "\n";
-                }
+            for(Vertex<E> vertex = sink; !vertex.equals(source); vertex = backwardsTable.get(vertex).getOpposite(vertex)) {
+                backwardsTable.get(vertex).setCurrFlow(vertex, bottleneck);
             }
-        }
 
-        return stringPath;
+            maxFlow += bottleneck;
+        }
     }
 
     class Edge<E> implements Comparable<Edge<E>> {
@@ -338,7 +232,7 @@ public class FordFulkerson<E> extends Graph<E> {
                 return from;
             }
             
-            throw new IllegalArgumentException("ERROR: Invalid vertex argument. The given vertex is not connected to this edge.");
+            throw new IllegalArgumentException("ERROR: Invalid vertex argument. The given vertex is not connected to the edge.");
         }
 	     
 	    public String toString(){
