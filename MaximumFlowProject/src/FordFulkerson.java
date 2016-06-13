@@ -327,6 +327,26 @@ public class FordFulkerson<E> extends Graph<E> {
 
         return stringPath;
     }
+    
+    public String getGraphMatrix() {
+    	String matrix = "";
+    	
+    	Iterator<Map.Entry<Vertex<E>, LinkedList<Edge<E>>>> iterator = edgeTable.entrySet().iterator();
+    	while (iterator.hasNext()) {
+        	Map.Entry pair = (Map.Entry)it.next();
+        	matrix += String.format("%20s", pair.key());
+        	matrix += "| ";
+        	LinkedList<Edge<E>> edgeIterator = pair.value().iterator();
+        	while(edgeIterator.hasNext()) {
+        		Edge<E> edge = edgeIterator.next();
+        		matrix += String.format("%20s", edge.to.data.toString());
+        		matrix += "| ";
+        	}
+        	matrix += "\n";
+    	}
+    	
+    	return matrix;
+    }
 
     // Basic class definition for an edge from vertex to vertex
     class Edge<E> implements Comparable<Edge<E>> {
