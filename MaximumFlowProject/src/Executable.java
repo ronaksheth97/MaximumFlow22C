@@ -83,7 +83,7 @@ public class Executable<E> {
 		btnUndoRemoval.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				//graph.undo(); Undo Removal
+				graph.undoRemove();
 			}
 		});
 		
@@ -202,7 +202,7 @@ public class Executable<E> {
 		return scanner;
 	}
 	/* Method to read file (adds edges directly to graph)
-	 * Format: "CityFrom,CityTo,Capacity" ***SPACE AFTER COMMA***
+	 * Format: "CityFrom, CityTo, Capacity" ***SPACE AFTER COMMA***
 	 */
 	private void readFromFile(String filename){
 		boolean failed = false;
@@ -350,14 +350,19 @@ public class Executable<E> {
 				String sinkS = sink.getText();
 				E sourceE = (E) sourceS;
 				E sinkE = (E) sinkS;
-				Vertex<E> sourceV = graph.getVertex(sourceE);
-				Vertex<E> sinkV = graph.getVertex(sinkE);
+				Vertex<E> from = graph.getVertex(sourceE);
+				Vertex<E> to = graph.getVertex(sinkE);
 				
 				
 				subMenu.dispose();
-				System.out.println(sourceS + " to " + sinkS + " shown"); // Temp to test values returned
 				
 				openDrawGraph();
+				
+				System.out.println("Path from " + from.data.toString() + " to " + to.data.toString() + ": " + graph.hasAugmentingPath(from, to));
+				System.out.println();
+		        graph.applyFordFulkerson(from, to);
+		        System.out.println("Max flow from s to t: " + graph.getMaxFlow());
+				
 				//printMaxFlow(sourceV, sinkV); Print Maxmimum Flow
 			}
 		});

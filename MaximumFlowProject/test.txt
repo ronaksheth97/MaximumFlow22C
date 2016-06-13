@@ -1,9 +1,10 @@
-San Francisco,San Jose,3
-San Jose,Los Angeles,20
-Los Angeles,Dallas,breakME
-Los Angeles, San Jose, 12
- Los Angeles,San Diego,3
-San Francisco,Los Angeles,1
-San Jose,Dallas,3
-Sacramento,San Francisco,4
-San Jose,Sacramento,8
+s, a, 9
+a, c, 8
+c, t, 10
+s, b, 9
+b, d, 3
+d, t, 7
+a, b, 10
+b, c, 1
+d, c, 8
+f, g, 10
