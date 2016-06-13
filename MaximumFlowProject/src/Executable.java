@@ -12,6 +12,7 @@ import javax.swing.*;
 public class Executable<E> {
 
 	private JFrame frame;
+	private JPanel panel_North, panel_Center, panel_West, panel_East, panel_South;
 	private JButton btnReadFromFile = new JButton("Read From File");
 	private JButton btnAddremoveEdge = new JButton("Add/Remove Edge");
 	private JButton btnDrawGraph = new JButton("Draw Graph");
@@ -19,7 +20,14 @@ public class Executable<E> {
 	private JButton btnUndoRemoval = new JButton("Undo Removal");
 	private JButton btnClear = new JButton("Clear Graph");
 	private JButton btnExit = new JButton("Exit");
-	private JLabel menuTitle = new JLabel("       Maximum Flow Problem");
+	private JLabel menuTitle = new JLabel("Team 2: Maximum Flow Problem");
+	private JLabel section1_CreateGraph = new JLabel("Step 1: Create your Graph");
+	private JLabel section2_ShowGraph = new JLabel("Step 2: Show your Graph");
+	private JLabel section3_GetMax = new JLabel("Step 3: Get Maximum Flow!");
+	private JLabel section4_Next = new JLabel("Next : ");
+	private Font font_Content = new Font("Arial", 0, 15);
+	private Font font_Subtitle = new Font("Arial", 1, 20);
+
 	FordFulkerson<E> graph;
 	public static Scanner userScanner = new Scanner(System.in);
 
@@ -30,6 +38,7 @@ public class Executable<E> {
 	private void init() {
 		graph = new FordFulkerson<E>();
 		
+/*Update main menu display of this part by following block as commented
 		frame = new JFrame();
 		frame.setSize(200, 240); // Window Dimensions
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,6 +53,73 @@ public class Executable<E> {
 		c.add("Undo", btnUndoRemoval);
 		c.add("Clear", btnClear);
 		c.add("Exit", btnExit);
+*/
+		//------------update starts: display of main menu------------
+		//set 5 panels of frame_mainMenu
+		panel_North = new JPanel();
+		panel_North.setBackground(new Color(255, 255, 255));
+		menuTitle.setFont(new Font("Arial",Font.BOLD, 30));
+		panel_North.add(menuTitle);
+		
+		panel_Center = new JPanel(new GridLayout(9,1));
+		panel_Center.setBackground(new Color(255, 255, 255));
+		section1_CreateGraph.setFont(font_Subtitle);
+		//section 1
+		panel_Center.add(section1_CreateGraph);
+		panel_Center.add(new JLabel(""));
+		btnReadFromFile.setFont(font_Content);
+		panel_Center.add("ReadFile", btnReadFromFile);
+		btnClear.setFont(font_Content);
+		panel_Center.add("Clear", btnClear);
+		btnAddremoveEdge.setFont(font_Content);
+		panel_Center.add("AddRemove", btnAddremoveEdge);
+		btnUndoRemoval.setFont(font_Content);
+		panel_Center.add("Undo", btnUndoRemoval);
+		section2_ShowGraph.setFont(font_Subtitle);
+		//section 2
+		panel_Center.add(section2_ShowGraph);
+		panel_Center.add(new JLabel(""));
+		btnDrawGraph.setFont(font_Content);
+		panel_Center.add("DrawGraph", btnDrawGraph);
+		panel_Center.add(new JLabel(""));
+		//section 3
+		section3_GetMax.setFont(font_Subtitle);
+		panel_Center.add(section3_GetMax);
+		panel_Center.add(new JLabel(""));	
+		btnGetMaximumFlow.setFont(font_Content);
+		panel_Center.add("GetMax", btnGetMaximumFlow);
+		panel_Center.add(new JLabel(""));		
+		//section 4
+		section4_Next.setFont(font_Subtitle);
+		panel_Center.add(section4_Next);
+		panel_Center.add(new JLabel(""));
+		btnExit.setFont(font_Content);
+		panel_Center.add("Exit", btnExit);
+		
+		panel_West = new JPanel();
+		panel_West.setBackground(new Color(255, 255, 255));
+		panel_West.add(new Label("  "));
+		panel_East = new JPanel();
+		panel_East.setBackground(new Color(255, 255, 255));
+		panel_East.add(new Label("  "));
+		panel_South = new JPanel();
+		panel_South.setBackground(new Color(255, 255, 255));
+		panel_South.add(new Label("  "));
+
+		
+		//initialize frame
+		frame = new JFrame();
+		frame.setTitle("Team 2 : Maximum Flow Problem"); // Window Title
+		frame.setSize(600, 500); // Window Dimensions
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null); // Center Window
+		//add panels
+		frame.add(panel_North, BorderLayout.NORTH);
+		frame.add(panel_Center, BorderLayout.CENTER);
+		frame.add(panel_West, BorderLayout.WEST);
+		frame.add(panel_East, BorderLayout.EAST);
+		frame.add(panel_South, BorderLayout.SOUTH);
+		//------------update ends: display of main menu------------
 
 		// Click Read From File Button
 		btnReadFromFile.addActionListener(new ActionListener() {
