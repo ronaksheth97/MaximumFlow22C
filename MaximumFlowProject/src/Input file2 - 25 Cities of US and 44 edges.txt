@@ -14,7 +14,7 @@ Las Vegas, Phoenix, 27
 Las Vegas, Denver, 39
 Salt Lake City, Las Vegas, 85
 Salt Lake City, Denver, 192
-Minneapolis, Salt Lake City , 88
+Minneapolis, Salt Lake City, 88
 Minneapolis, Chicago, 76
 Denver, Phoenix, 34
 Denver, Minneapolis, 110
