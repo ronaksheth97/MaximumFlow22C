@@ -150,9 +150,9 @@ public class Graph<E>
 	   if( startVertex != null )
 	   {
 		   Pair<Vertex<E>, Double> endPair = startVertex.adjList.remove(end);
-		   removedOK = endPair != null;
+		   removedOK = endPair!=null;
 	   }
-	   /* Add if UNDIRECTED GRAPH:
+	   /*// Add if UNDIRECTED GRAPH:
 		Vertex<E> endVertex = vertexSet.get(end);
 		if( endVertex != null )
 		{
@@ -244,39 +244,42 @@ public class Graph<E>
 
    public void depthFirstTraversalHelper(Vertex<E> startVertex, Visitor<E> visitor)
    {
-        // YOU COMPLETE THIS (USE THE ALGORITHM GIVEN FOR LESSON 11 EXERCISE
-    	//DEPTH FIRST SEARCH TRAVERAL ALGORITHM:
-	//DFS(G,v):
-	//	label v as visited
-	//	for all edges from v to w in G.adjacentEdges(v) do
-	//		if vertex w is not labeled as discovered then
-	//			recursively call DFS(G,w)
-	//		end if
-	//	end for
+	   // YOU COMPLETE THIS (USE THE ALGORITHM GIVEN FOR LESSON 11 EXERCISE)
+	   //DEPTH FIRST SEARCH TRAVERAL ALGORITHM:
+	   //DFS(G,v):
+	   //	label v as visited
+	   //	for all edges from v to w in G.adjacentEdges(v) do
+	   //		if vertex w is not labeled as discovered then
+	   //			recursively call DFS(G,w)
+	   //		end if
+	   //	end for
 	   
-	E startData = startVertex.getData();
-	startVertex.visit(); // marked as visited for traverse purpose
-	visitor.visit(startData); // customer designed visit action, like print...
+	   E startData = startVertex.getData();
+	   startVertex.visit(); // marked as visited for traverse purpose
+	   visitor.visit(startData); // customer designed visit action, like print...
 	   
-	Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iter = startVertex.iterator();//all elements in startVertex's adjList
+	   Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iter = startVertex.iterator();//all elements in startVertex's adjList
 	   
-	Entry<E, Pair<Vertex<E>, Double>> nextEntry = null;
+	   Entry<E, Pair<Vertex<E>, Double>> nextEntry = null;
 	   
-	for (nextEntry = iter.next();iter.hasNext();)//all elements in startVertex's adjList
-	{
-		Vertex<E> neighborVertex = nextEntry.getValue().first;
-		if(!neighborVertex.visited)
-		{
-			depthFirstTraversalHelper(neighborVertex, visitor);
-		} //end if
-	} //end for 
+	   while (iter.hasNext())//all elements in startVertex's adjList
+	   {
+		   nextEntry = iter.next();
+		   
+		   Vertex<E> neighborVertex = nextEntry.getValue().first;
+		   if(!neighborVertex.visited)
+		   {
+			   depthFirstTraversalHelper(neighborVertex, visitor);
+		   } //end if
+	   } //end for 
    }
 
 
-// WRITE THE INSTANCE METHOD HERE TO
+   // WRITE THE INSTANCE METHOD HERE TO
    //         WRITE THE GRAPH's vertices and its
    //         adjacency list TO A TEXT FILE (SUGGEST TO PASS AN
    //        ALREADY OPEN PrintWriter TO THIS) !
+
    public void writeGraphToFile(PrintWriter writer)
    {
 	   Iterator<Map.Entry<E, Vertex<E>>> iterVertex = this.vertexSet.entrySet().iterator();
@@ -308,6 +311,5 @@ public class Graph<E>
 		   writer.println(printString.toString()); // !!!must use println/printf/format to flush
 	   }   
    }
-
-
+   
 }
