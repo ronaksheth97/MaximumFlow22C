@@ -558,21 +558,47 @@ public class Executable<E> {
 			public void actionPerformed(ActionEvent e){
 				JOptionPane getOutputFile = new JOptionPane();
 				String fileName = getOutputFile.showInputDialog("Please enter filename");
+				if(fileName == null){
+					return;
+				}
 				PrintWriter out;
-				try{
-					out = new PrintWriter(fileName);
+				boolean fileExists = new File(fileName).exists();
+				if(fileExists){
+					int dialogButton = JOptionPane.YES_NO_OPTION;
+					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure you want to overwrite " + fileName,"Warning", dialogButton);
+					if(dialogResult == JOptionPane.YES_OPTION){
+						try{
+							out = new PrintWriter(fileName);
+						}
+						catch(FileNotFoundException ex){
+							System.err.print("\nInvalid File");
+							return;
+						}
+						catch(NullPointerException nx){
+							System.err.print("\nOutput Not Exported");
+							return;
+						}
+						out.println(textArea.getText());
+						System.out.println("\n" + fileName + " Sucessfully Overwritten");
+						out.close();
+					}
 				}
-				catch(FileNotFoundException ex){
-					System.err.print("\nInvalid File");
-					return;
+				else{
+					try{
+						out = new PrintWriter(fileName);
+					}
+					catch(FileNotFoundException ex){
+						System.err.print("\nInvalid File");
+						return;
+					}
+					catch(NullPointerException nx){
+						System.err.print("\nOutput Not Exported");
+						return;
+					}
+					out.println(textArea.getText());
+					System.out.println("\nFile Sucessfully Exported to " + fileName);
+					out.close();
 				}
-				catch(NullPointerException nx){
-					System.err.print("\nOutput Not Exported");
-					return;
-				}
-				out.println(textArea.getText());
-				System.out.println("File Sucessfully Exported to " + fileName);
-				out.close();
 				//System.out.println("\nExporting to: " + fileName) Temp to ensure it works (prints to screen)
 			}
 		});
