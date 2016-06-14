@@ -218,7 +218,7 @@ public class Executable<E> {
 					section1_UndoRemoveStatus.setText("  Status: Nothing to undo!");
 					section1_UndoRemoveStatus.setForeground(Color.RED);
 					section1_UndoRemoveStatus.updateUI();
-				}else {
+				} else {
 					//update main notice
 					String from = edge.from.data;
 					String to = edge.to.data;
@@ -335,19 +335,23 @@ public class Executable<E> {
 
 					return;
 				}
-				
-				graph.addEdge(cityF, cityT, maxFlow);
-				
+				try {
+				    graph.addEdge(cityF, cityT, maxFlow);
 
-				System.out.println(cityF + " to " + cityT + " with max flow of " + maxFlow + " added"); // Temp to test values returned
-				// update msg on main menu
-				section1_AddOrRemoveStatus.setText("  Status: [" + cityF + "] to [" + cityT + "] , max flow (" + maxFlow + ") added");
-				section1_AddOrRemoveStatus.setForeground(Color.BLUE);
-				section1_AddOrRemoveStatus.updateUI();
+				    section1_AddOrRemoveStatus.setText("  Status: [" + cityF + "] to [" + cityT + "] , max flow (" + maxFlow + ") added");
+				    section1_AddOrRemoveStatus.setForeground(Color.BLUE);
 				
+                } catch(Exception ex) {
+				    section1_AddOrRemoveStatus.setText("  " + ex.getMessage());
+				    section1_AddOrRemoveStatus.setForeground(Color.RED);
+
+                }
+				section1_AddOrRemoveStatus.updateUI();
+
 				section3_MaxFlowStatus.setText("  Status: ");
 				section3_MaxFlowStatus.setForeground(Color.GRAY);
 				section3_MaxFlowStatus.updateUI();
+				
 
 				subMenu.dispose();
 			}
@@ -358,11 +362,15 @@ public class Executable<E> {
 			public void actionPerformed(ActionEvent e) {
 				String cityF = vertex1.getText(); // E is specified to String
 				String cityT = vertex2.getText(); // E is specified to String
-				graph.remove(cityF, cityT);
-				System.out.println(cityF + " to " + cityT + " removed"); // Temp to test values returned
-				//update menu notice
-				section1_AddOrRemoveStatus.setText("  Status: " + cityF + " to " + cityT + " removed");
-				section1_AddOrRemoveStatus.setForeground(Color.BLUE);
+                
+                try {
+				    graph.remove(cityF, cityT);
+				    section1_AddOrRemoveStatus.setText("  Status: " + cityF + " to " + cityT + " removed");
+				    section1_AddOrRemoveStatus.setForeground(Color.BLUE);
+                } catch(Exception ex) {
+				    section1_AddOrRemoveStatus.setText("  " + ex.getMessage());
+				    section1_AddOrRemoveStatus.setForeground(Color.RED);
+                }
 				section1_AddOrRemoveStatus.updateUI();
 				
 				section3_MaxFlowStatus.setText("  Status: ");
@@ -406,8 +414,10 @@ public class Executable<E> {
 	 * Format: "CityFrom, CityTo, Capacity" ***SPACE AFTER COMMA***
 	 */
 	private void readFromFile(String filename){
+        graph.clear();
 		boolean failed = false;
 		Scanner file = openInputFile(filename);
+
 		if(file == null){
 			printErrMsg("Unable to open " + filename);
 			//show file read successfully msg
@@ -420,48 +430,59 @@ public class Executable<E> {
 			section3_MaxFlowStatus.updateUI();
 			return;
 		}
-		while(file.hasNextLine()){
+
+		while(file.hasNextLine() && !failed){
 			String line = file.nextLine();
 			line = line.trim();
-		  //line = line.replaceAll("\\s","");
+		    // line = line.replaceAll("\\s","");
 			String[] aline = line.split(", ");
 			if(aline.length != 3){
 				printErrMsg("Unable to add: " + line);
-			}
-			else{
+                failed = true;
+                graph.clear();
+                section1_ReadStatus.setText("  ERROR: Invalid input format.");
+                section1_ReadStatus.setForeground(Color.RED);
+                section1_ReadStatus.updateUI();
+			} else {
 				String from = aline[0];
 				String to = aline[1];
 				String caps = aline[2];
 				int cap = -1;
+
 				try {
 					cap = Integer.parseInt(caps);
-				} catch (Exception inv) { // If unable to parse input as int,
-											// close window and return
+				} catch (Exception inv) { // If unable to parse input as int, close window and return
 					printErrMsg("Unable to add: " + line);
 					failed = true;
+                    graph.clear();
+                    section1_ReadStatus.setText("  ERROR: Unable to add given edge.");
+                    section1_ReadStatus.setForeground(Color.RED);
+                    section1_ReadStatus.updateUI();
 				}
+
 				if(cap < 1 && !failed){ // If capacity is 0 or negative
 					printErrMsg("Unable to add: " + line);
 					failed = true;
+                    graph.clear();
+                    section1_ReadStatus.setText("  ERROR: Unable to add given edge.");
+                    section1_ReadStatus.setForeground(Color.RED);
+                    section1_ReadStatus.updateUI();
 				}
+
 				if(!failed){ // Do not add if failed
 					graph.addEdge(from, to, cap);
+                    section1_ReadStatus.setText("  Status: Read successfully!");
+                    section1_ReadStatus.setForeground(Color.BLUE);
+                    section1_ReadStatus.updateUI();
 				}
 			}
-			failed = false; // Reset for next line
 			//show file read successfully msg
-			section1_ReadStatus.setText("  Status: Read successfully!");
-			section1_ReadStatus.setForeground(Color.BLUE);
-			section1_ReadStatus.updateUI();
-		
-			section3_MaxFlowStatus.setText("  Status: ");
-			section3_MaxFlowStatus.setForeground(Color.GRAY);
-			section3_MaxFlowStatus.updateUI();
+            /*
+            section3_MaxFlowStatus.setText("  Status: ");
+	        section3_MaxFlowStatus.setForeground(Color.GRAY);
+		    section3_MaxFlowStatus.updateUI();
+            */
 		}
-		//show file read successfully msg
-		section1_ReadStatus.setText("  Read status: Successfully!");
-		section1_ReadStatus.setForeground(Color.BLUE);
-		section1_ReadStatus.updateUI();
 	}
 	
 	// Sub-Menu for Draw Graph Button
@@ -503,8 +524,12 @@ public class Executable<E> {
 		
 		//displayGraph();
 		if(type == 1){
-			System.out.println("Team 2 Adjacency List: ");
-			System.out.print(graph.displayAdjacencyList());
+            try {
+			    System.out.println("Team 2 Adjacency List: ");
+			    System.out.print(graph.displayAdjacencyList());
+            } catch(IllegalStateException ex) {
+                System.out.print(ex.getMessage());
+            }
 		}
 		
 		if(type == 2){

@@ -10,7 +10,6 @@ public class FordFulkerson<E> extends Graph<E> {
     private HashMap<Vertex<E>, LinkedList<Edge<E>>> edgeTable; // stores all the adjacent edges to a node using separate chaining
     private LinkedStack<Pair<Vertex<E>, Edge<E>>> undoRemoveStack; // stack for storing removed elements in the case for undoing
     private LinkedList<LinkedList<Vertex<E>>> paths; // list of all paths from source to vertex
-	private int maxEdges = 0;
     
     /* FordFulkerson()
      * initializes a graph class which has the capability to find the maximum flow from a source to sink in the graph
@@ -57,7 +56,7 @@ public class FordFulkerson<E> extends Graph<E> {
 
         LinkedList<Edge<E>> edgeList = edgeTable.get(sourceVertex);
         if(edgeList == null) {
-            throw new IllegalArgumentException("ERROR: The given vertex has no associated edges.");
+            return false;
         }
 
         Iterator<Edge<E>> iterator = edgeList.iterator();
@@ -78,7 +77,7 @@ public class FordFulkerson<E> extends Graph<E> {
     public Edge<E> getEdge(Vertex<E> source, Vertex<E> dest) {
         LinkedList<Edge<E>> edgeList = edgeTable.get(source);
         if(edgeList == null) {
-            throw new IllegalArgumentException("ERROR: The given vertex has no associated edges.");
+            return null;
         }
 
         Iterator<Edge<E>> iterator = edgeList.iterator();
@@ -104,7 +103,6 @@ public class FordFulkerson<E> extends Graph<E> {
             undoRemoveStack.pop();
         }
         maxFlow = 0;
-		maxEdges = 0;
     }
 
     /* void addEdge(E source, E dest, int capacity)
@@ -114,6 +112,10 @@ public class FordFulkerson<E> extends Graph<E> {
      * @param capacity - the maximum flow of the edge
      */
     public void addEdge(E source, E dest, int capacity) {
+        if(containsEdge(source, dest)) {
+            throw new IllegalArgumentException("ERROR: The edge already exists. Unable to add edge.");
+        }
+
         super.addEdge(source, dest, capacity); // typo problem fixed: it was super.addEdge(source, dest, maxFlow), 
         					// so capacity for all edges are showed 0.0 at console and ui diplay box
 
@@ -130,10 +132,6 @@ public class FordFulkerson<E> extends Graph<E> {
             edgeList = edgeTable.get(from);
             edgeList.add(edge);
         }
-		
-		if(maxEdges < edgeList.size()) {
-			maxEdges = edgeList.size();
-		}
     }
 
     /* booleam remove(E start, E end)
@@ -143,18 +141,14 @@ public class FordFulkerson<E> extends Graph<E> {
      */
     public boolean remove(E start, E end) {
         Vertex<E> source = getVertex(start);
-        if(source == null) {
-            throw new IllegalArgumentException("ERROR: The element to be removed is null or does not exist in the graph.");
-        }
-
         Vertex<E> dest = getVertex(end);
-        if(dest == null) {
-            throw new IllegalArgumentException("ERROR: The source vertex of the element to be removed is null or does not exist in the graph.");
+        if(source == null || dest == null) {
+            throw new IllegalArgumentException("ERROR: The edge does not exist.");
         }
         
         LinkedList<Edge<E>> tempList = edgeTable.get(source);
         if(tempList.isEmpty() || tempList == null) {
-            throw new NullPointerException("ERROR: Edge associated with the vertex does not exist.");
+            throw new IllegalArgumentException("ERROR: The edge does not exist.");
         }
 		
 
@@ -166,10 +160,6 @@ public class FordFulkerson<E> extends Graph<E> {
                 iterator.remove();
             }
         }
-		
-		if(tempList.size() > maxEdges) {
-			maxEdges = tempList.size();
-		}
         
         return super.remove(start, end);
     }
@@ -372,17 +362,27 @@ public class FordFulkerson<E> extends Graph<E> {
     }
     
     public String displayAdjacencyList() {
+        int maxEdges = 0;
 		if(vertexSet.isEmpty()) {
-			throw new IllegalStateException("ERROR: Cannot display adjacency list for an empty list.");
+			throw new IllegalStateException("ERROR: Cannot display adjacency list for an empty graph.");
 		}
 		
     	String matrix = "";
+
+		Iterator<Map.Entry<E, Vertex<E>>> vertexIterator = vertexSet.entrySet().iterator();
+        while(vertexIterator.hasNext()) {
+			Map.Entry<E, Vertex<E>> mapEntry = vertexIterator.next();
+            HashMap<E, Pair<Vertex<E>, Double>> hash = mapEntry.getValue().adjList;
+            if(hash.size() > maxEdges) {
+                maxEdges = hash.size();
+            }
+        }
 		
         matrix += (String.format("%-25s", "VERTEX") + "|| ADJACENT VERTEX/VERTICES\n");
     	
-		Iterator<Map.Entry<E, Vertex<E>>> adjacencyIterator = vertexSet.entrySet().iterator();
-		while(adjacencyIterator.hasNext()) {
-			Map.Entry<E, Vertex<E>> mapEntry = adjacencyIterator.next();
+		vertexIterator = vertexSet.entrySet().iterator();
+		while(vertexIterator.hasNext()) {
+			Map.Entry<E, Vertex<E>> mapEntry = vertexIterator.next();
         	matrix += String.format("%-25s", mapEntry.getValue().data.toString());
         	matrix += "|| ";
 			HashMap<E, Pair<Vertex<E>, Double>> adjMap = mapEntry.getValue().adjList;

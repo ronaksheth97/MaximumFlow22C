@@ -32,7 +32,7 @@ public class Driver {
     
 	private static void readFromFile(FordFulkerson<String> graph){
 	    //!!!remember to change to your file path
-		String filename = "test.txt"; 
+		String filename = "input2.txt"; 
 		boolean failed = false;
 		
 		try{
@@ -108,7 +108,11 @@ public class Driver {
         System.out.println("TESTING FORD-FULKERSON:");
         FordFulkerson<String> ff2 = new FordFulkerson<String>();
         readFromFile(ff2); // use added method
-        ff2.showAdjTable();
+        // ff2.addEdge("Seattle", "Las Vegas", 120);
+        System.out.println(ff2.displayAdjacencyList());
+        ff2.remove("Seattle", "Las Vegas");
+        ff2.remove("Denver", "Houston");
+        System.out.println(ff2.displayAdjacencyList());
         
         long startTime, stopTime;
         double elapsedTime = 0;
@@ -122,8 +126,8 @@ public class Driver {
         ff2.applyFordFulkerson(from, to);
         stopTime = System.nanoTime();  
 
-        System.out.println("Max flow from SF to SJ using Ford-Fulkerson: " + ff2.getMaxFlow()); // should be 12
-        System.out.println("\nPaths:\n" + ff2.getPathsToString());
+        System.out.println("Max flow using Ford-Fulkerson: " + ff2.getMaxFlow()); // should be 12
+        // System.out.println("\nPaths:\n" + ff2.getPathsToString());
 
         elapsedTime =(double)(stopTime - startTime)/1000000.0;
         System.out.println("\nFord-Fulkerson Time: " + elapsedTime + " milliseconds.");
@@ -133,11 +137,11 @@ public class Driver {
         
         Visitor<String> vis = new FlowVisitor<>();
         
-        System.out.println("Breath First Traversal:");
-        ff2.breadthFirstTraversal("Seattle", vis);
+        // System.out.println("Breath First Traversal:");
+        // ff2.breadthFirstTraversal("Seattle", vis);
         
-        System.out.println("\n\nDepth First Traversal:");
-        ff2.depthFirstTraversal("Seattle", vis);
+        // System.out.println("\n\nDepth First Traversal:");
+        // ff2.depthFirstTraversal("Seattle", vis);
         /*
         System.out.println("\n--------------------------------------------\nTESTING EDMONDS-KARP:");
         EdmondsKarp<String> ek = new EdmondsKarp<String>();
