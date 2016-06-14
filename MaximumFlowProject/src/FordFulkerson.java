@@ -330,13 +330,19 @@ public class FordFulkerson<E> extends Graph<E> {
                     stringPath += "\n";
                 }
             }
-        }
+        } else {
+			throw new IllegalStateException("ERROR: The paths may only be displayed after computing for the maximum flow in a non-empty graph.");
+		}
 
 		
         return stringPath;
     }
     
     public String displayAdjacencyList() {
+		if(vertexSet.isEmpty()) {
+			throw new IllegalStateException("ERROR: Cannot display adjacency list for an empty graph.");
+		}
+		
     	String matrix = "";
 		
         matrix += (String.format("%-25s", "VERTEX") + "|| ADJACENT VERTEX/VERTICES\n");
@@ -361,26 +367,6 @@ public class FordFulkerson<E> extends Graph<E> {
         	}
         	matrix += "\n";
 		}
-		
-		/*
-    	while (iterator.hasNext()) {
-        	Map.Entry<Vertex<E>, LinkedList<Edge<E>>> pair = iterator.next();
-        	matrix += String.format("%-25s", pair.getKey().data.toString());
-        	matrix += "|| ";
-        	Iterator<Edge<E>> edgeIterator = pair.getValue().iterator();
-        	for(int i = 0; i < maxElements; ++i) {
-        		if(edgeIterator.hasNext()) {
-        			Edge<E> edge = edgeIterator.next();
-					String temp = edge.to.data.toString() + " (" + edge.maxFlow + ")";
-        			matrix += String.format("%-24s", temp);
-        		} else {
-        			matrix += String.format("%-24s", "---");
-        		}
-        		matrix += "| ";
-        	}
-        	matrix += "\n";
-    	}
-		*/
     	
     	return matrix;
     }
