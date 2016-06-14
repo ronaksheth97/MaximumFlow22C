@@ -70,7 +70,7 @@ public class Executable<E> {
 		menuTitle.setFont(new Font("Arial",Font.BOLD, 30));
 		panel_North.add(menuTitle);
 		
-		panel_Center = new JPanel(new GridLayout(11,1));
+		panel_Center = new JPanel(new GridLayout(12,1));
 		panel_Center.setBackground(new Color(255, 255, 255));
 		section1_CreateGraph.setFont(font_Subtitle);
 		//section 1 - title
@@ -177,6 +177,27 @@ public class Executable<E> {
 			@Override
 			public void actionPerformed(ActionEvent e){
 				 openDrawGraph(1);
+			}
+		});
+		
+		btnDrawGraph_Instructor.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				 openDrawGraph(2);
+			}
+		});
+		
+		btnDrawGraph_DepthFirst.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				 openDrawGraph(4);
+			}
+		});
+		
+		btnDrawGraph_BreathFirst.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				 openDrawGraph(3);
 			}
 		});
 		
@@ -482,7 +503,26 @@ public class Executable<E> {
 		
 		//displayGraph();
 		if(type == 1){
+			System.out.println("Team 2 Adjacency List: ");
 			System.out.print(graph.getGraphMatrix());
+		}
+		
+		if(type == 2){
+			System.out.println("Adjacency List: ");
+			graph.showAdjTable();
+		}
+		
+		if(type == 3){
+			System.out.println("Breadth First Traversal: ");
+			JOptionPane getSource = new JOptionPane();
+			String source = getSource.showInputDialog("Please enter start element(Source)");
+			graph.breadthFirstTraversal(source, new FlowVisitor<String>());
+		}
+		if(type == 4){
+			System.out.println("Depth First Traversal: ");
+			JOptionPane getSource = new JOptionPane();
+			String source = getSource.showInputDialog("Please enter start element(Source)");
+			graph.depthFirstTraversal(source, new FlowVisitor<String>());
 		}
 		// Test output to Export
 		//System.out.println(textArea.getText());
