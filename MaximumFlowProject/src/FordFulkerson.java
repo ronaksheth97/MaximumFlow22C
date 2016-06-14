@@ -10,6 +10,7 @@ public class FordFulkerson<E> extends Graph<E> {
     private HashMap<Vertex<E>, LinkedList<Edge<E>>> edgeTable; // stores all the adjacent edges to a node using separate chaining
     private LinkedStack<Pair<Vertex<E>, Edge<E>>> undoRemoveStack; // stack for storing removed elements in the case for undoing
     private LinkedList<LinkedList<Vertex<E>>> paths; // list of all paths from source to vertex
+	private int maxEdges = 0;
     
     /* FordFulkerson()
      * initializes a graph class which has the capability to find the maximum flow from a source to sink in the graph
@@ -128,6 +129,10 @@ public class FordFulkerson<E> extends Graph<E> {
             edgeList = edgeTable.get(from);
             edgeList.add(edge);
         }
+		
+		if(maxEdges < edgeList.size()) {
+			maxEdges = edgeList.size();
+		}
     }
 
     /* booleam remove(E start, E end)
@@ -331,22 +336,33 @@ public class FordFulkerson<E> extends Graph<E> {
         return stringPath;
     }
     
-    public String getGraphMatrix() {
+    public String displayAdjacencyList() {
     	String matrix = "";
-    	int maxElements = 0;
-    	
-    	Iterator<Map.Entry<Vertex<E>, LinkedList<Edge<E>>>> iterator = edgeTable.entrySet().iterator();
-    	while(iterator.hasNext()) {
-        	Map.Entry<Vertex<E>, LinkedList<Edge<E>>> pair = iterator.next();
-        	LinkedList<Edge<E>> list = pair.getValue();
-        	if(list.size() > maxElements) {
-        		maxElements = list.size();
-        	}
-    	}
 		
-        matrix += (String.format("%-25s", "VERTEX") + "|| EDGE(S) TO\n");
+        matrix += (String.format("%-25s", "VERTEX") + "|| ADJACENT VERTEX/VERTICES\n");
     	
-    	iterator = edgeTable.entrySet().iterator();
+		Iterator<Map.Entry<E, Vertex<E>>> adjacencyIterator = vertexSet.entrySet().iterator();
+		while(adjacencyIterator.hasNext()) {
+			Map.Entry<E, Vertex<E>> mapEntry = adjacencyIterator.next();
+        	matrix += String.format("%-25s", mapEntry.getValue().data.toString());
+        	matrix += "|| ";
+			HashMap<E, Pair<Vertex<E>, Double>> adjMap = mapEntry.getValue().adjList;
+			Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> hashIterator = adjMap.entrySet().iterator();
+			for(int i = 0; i < maxEdges; ++i) {
+        		if(hashIterator.hasNext()) {
+					Map.Entry<E, Pair<Vertex<E>, Double>> vertexEntry = hashIterator.next();
+					Vertex<E> vertex = vertexEntry.getValue().first;
+					String temp = vertex.data.toString() + " (" + vertexEntry.getValue().second.intValue() + ")";
+        			matrix += String.format("%-24s", temp);
+        		} else {
+        			matrix += String.format("%-24s", "---");
+        		}
+        		matrix += "| ";
+        	}
+        	matrix += "\n";
+		}
+		
+		/*
     	while (iterator.hasNext()) {
         	Map.Entry<Vertex<E>, LinkedList<Edge<E>>> pair = iterator.next();
         	matrix += String.format("%-25s", pair.getKey().data.toString());
@@ -364,6 +380,7 @@ public class FordFulkerson<E> extends Graph<E> {
         	}
         	matrix += "\n";
     	}
+		*/
     	
     	return matrix;
     }
