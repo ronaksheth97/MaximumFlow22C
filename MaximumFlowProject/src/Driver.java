@@ -129,7 +129,7 @@ public class Driver {
         System.out.println("\nFord-Fulkerson Time: " + elapsedTime + " milliseconds.");
         
         
-        System.out.println("\n\n" + ff2.getGraphMatrix() + "\n\n");
+        System.out.println("\n\n" + ff2.displayAdjacencyList() + "\n\n");
         
         Visitor<String> vis = new FlowVisitor<>();
         

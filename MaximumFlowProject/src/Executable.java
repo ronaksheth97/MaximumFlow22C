@@ -504,7 +504,7 @@ public class Executable<E> {
 		//displayGraph();
 		if(type == 1){
 			System.out.println("Team 2 Adjacency List: ");
-			System.out.print(graph.getGraphMatrix());
+			System.out.print(graph.displayAdjacencyList());
 		}
 		
 		if(type == 2){
