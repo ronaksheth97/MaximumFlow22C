@@ -204,7 +204,11 @@ public class FordFulkerson<E> extends Graph<E> {
 
         paths.clear();
         unvisitVertices();
-        hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
+		try {
+			hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
+		} catch(NullPointerException e) {
+			throw new NullPointerException("ERROR: Source and sink must have a path connecting them.");
+		}
 
         return sink.isVisited();
     }
