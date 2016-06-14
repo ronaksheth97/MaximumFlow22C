@@ -148,7 +148,7 @@ public class FordFulkerson<E> extends Graph<E> {
         
         LinkedList<Edge<E>> tempList = edgeTable.get(source);
         if(tempList.isEmpty() || tempList == null) {
-            throw new IllegalArgumentException("ERROR: The edge does not exist.");
+            throw new NullPointerException("ERROR: Edge associated with the vertex does not exist.");
         }
 		
 
@@ -199,12 +199,8 @@ public class FordFulkerson<E> extends Graph<E> {
         }
 
         unvisitVertices();
-		try {
-			hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
-		} catch(NullPointerException e) {
-			throw new NullPointerException("ERROR: Source and sink must have a path connecting them.");
-		}
-
+		hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
+		
         return sink.isVisited();
     }
 
@@ -224,15 +220,21 @@ public class FordFulkerson<E> extends Graph<E> {
             return;
         }
 
-        LinkedList<Edge<E>> edgeList = edgeTable.get(source);
-        Iterator<Edge<E>> iterator = edgeList.iterator();
-        while(iterator.hasNext()) {
-            Edge<E> edge = iterator.next();
-            Vertex<E> opposite = edge.getOpposite(source);
-            if(!currPath.contains(opposite) && edge.getResidualCapacity(opposite) > 0) {
-                hasAugmentingPathRecursive(opposite, sink, currPath);
+        try {
+            LinkedList<Edge<E>> edgeList = edgeTable.get(source);
+            Iterator<Edge<E>> iterator = edgeList.iterator();
+            while(iterator.hasNext()) {
+                Edge<E> edge = iterator.next();
+                Vertex<E> opposite = edge.getOpposite(source);
+                if(!currPath.contains(opposite) && edge.getResidualCapacity(opposite) > 0) {
+                    hasAugmentingPathRecursive(opposite, sink, currPath);
+                }
             }
+        } catch(NullPointerException ex) {
+            currPath.remove(source);
+            return;
         }
+
 
         currPath.remove(source);
     }
