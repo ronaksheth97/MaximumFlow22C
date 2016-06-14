@@ -588,12 +588,32 @@ public class Executable<E> {
 			public void actionPerformed(ActionEvent e){
 				String sourceS = source.getText();
 				String sinkS = sink.getText();
-				Vertex<String> sourceOfGraph = graph.getVertex(sourceS); // local variable "from" is changed to "sourceOfGraph"
-				Vertex<String> sinkOfGraph = graph.getVertex(sinkS); // local variable "to" is changed to "sinkOfGraph"
+				Vertex<String> sourceOfGraph = null;
+				Vertex<String> sinkOfGraph = null;
+				try{
+					sourceOfGraph = graph.getVertex(sourceS); // local variable "from" is changed to "sourceOfGraph"
+					sinkOfGraph = graph.getVertex(sinkS); // local variable "to" is changed to "sinkOfGraph"
+				}
+				catch(NullPointerException ex){
+					
+				}
 				
 				subMenu.dispose();
 				
 				openDrawGraph(0);
+				if(sourceOfGraph == null && sinkOfGraph == null){
+					System.out.println("Invalid Sink and Source");
+					return;
+				}
+				
+				if(sourceOfGraph == null ){
+					System.out.println("Invalid Source");
+					return;
+				}
+				if(sinkOfGraph == null){
+					System.out.println("Invalid Sink");
+					return;
+				}
 				
 				System.out.println("Path from [ " + sourceOfGraph.data.toString() + " ] to [ " + sinkOfGraph.data.toString() + " ]: " + graph.hasAugmentingPath(sourceOfGraph, sinkOfGraph)); // add [] to show a better display
 				printMaxFlow(sourceOfGraph, sinkOfGraph);
