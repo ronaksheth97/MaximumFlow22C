@@ -256,8 +256,6 @@ public class FordFulkerson<E> extends Graph<E> {
         maxFlow = 0;
 		if(!paths.isEmpty()) {
 			clearFlowValues();
-		} else {
-			paths.clear();
 		}
 		
         if(hasAugmentingPath(source, sink)) {
@@ -368,8 +366,6 @@ public class FordFulkerson<E> extends Graph<E> {
                 }
             }
         } 
-		
-		if(stringPath)
 		
         return stringPath;
     }
