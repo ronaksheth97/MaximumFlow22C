@@ -340,7 +340,7 @@ public class FordFulkerson<E> extends Graph<E> {
     
     public String displayAdjacencyList() {
 		if(vertexSet.isEmpty()) {
-			throw new IllegalStateException("ERROR: Cannot display adjacency list for an empty graph.");
+			throw new IllegalStateException("ERROR: Cannot display adjacency list for an empty list.");
 		}
 		
     	String matrix = "";
