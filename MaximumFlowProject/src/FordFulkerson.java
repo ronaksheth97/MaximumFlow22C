@@ -196,7 +196,6 @@ public class FordFulkerson<E> extends Graph<E> {
      * @return boolean - returns true if there is at least one path from the source to the sink
      */
     public boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink) {
-		paths.clear();
         if(source == null) {
             throw new NullPointerException("ERROR: The source parameter cannot be null.");
         }
@@ -257,6 +256,8 @@ public class FordFulkerson<E> extends Graph<E> {
         maxFlow = 0;
 		if(!paths.isEmpty()) {
 			clearFlowValues();
+		} else {
+			paths.clear();
 		}
 		
         if(hasAugmentingPath(source, sink)) {
@@ -366,10 +367,9 @@ public class FordFulkerson<E> extends Graph<E> {
                     stringPath += "\n";
                 }
             }
-        } else {
-			throw new IllegalStateException("ERROR: The paths may only be displayed after computing for the maximum flow in a non-empty graph.");
-		}
-
+        } 
+		
+		if(stringPath)
 		
         return stringPath;
     }
