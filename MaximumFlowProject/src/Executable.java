@@ -490,6 +490,7 @@ public class Executable<E> {
 		JFrame subMenu = new JFrame();
 		JButton btnExport = new JButton("Export");
 		final JTextArea textArea = new JTextArea(50, 10);
+		textArea.setFont(new Font("Consolas", 0 ,12));
 		textArea.setEditable(false);
 		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
 		// keeps reference of standard output stream;
