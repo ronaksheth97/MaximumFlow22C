@@ -104,6 +104,7 @@ public class FordFulkerson<E> extends Graph<E> {
             undoRemoveStack.pop();
         }
         maxFlow = 0;
+		maxEdges = 0;
     }
 
     /* void addEdge(E source, E dest, int capacity)
@@ -155,6 +156,7 @@ public class FordFulkerson<E> extends Graph<E> {
         if(tempList.isEmpty() || tempList == null) {
             throw new NullPointerException("ERROR: Edge associated with the vertex does not exist.");
         }
+		
 
         Iterator<Edge<E>> iterator = tempList.iterator();
         while(iterator.hasNext()) {
@@ -164,6 +166,10 @@ public class FordFulkerson<E> extends Graph<E> {
                 iterator.remove();
             }
         }
+		
+		if(tempList.size() > maxEdges) {
+			maxEdges = tempList.size();
+		}
         
         return super.remove(start, end);
     }
@@ -190,8 +196,6 @@ public class FordFulkerson<E> extends Graph<E> {
      * @return boolean - returns true if there is at least one path from the source to the sink
      */
     public boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink) {
-		paths.clear();
-        maxFlow = 0;
         if(source == null) {
             throw new NullPointerException("ERROR: The source parameter cannot be null.");
         }
@@ -204,7 +208,6 @@ public class FordFulkerson<E> extends Graph<E> {
             throw new IllegalArgumentException("ERROR: The source and sink cannot be the same.");
         }
 
-        paths.clear();
         unvisitVertices();
 		try {
 			hasAugmentingPathRecursive(source, sink, new LinkedList<Vertex<E>>());
@@ -250,8 +253,11 @@ public class FordFulkerson<E> extends Graph<E> {
      * @param sink     - the sink of the flow network
      */
     public void applyFordFulkerson(Vertex<E> source, Vertex<E> sink) {
-		paths.clear();
         maxFlow = 0;
+		if(!paths.isEmpty()) {
+			clearFlowValues();
+		}
+		
         if(hasAugmentingPath(source, sink)) {
             Iterator<LinkedList<Vertex<E>>> listIterator = paths.iterator();
 
@@ -297,6 +303,29 @@ public class FordFulkerson<E> extends Graph<E> {
             }
         }
     }
+	
+	private void clearFlowValues() {
+        Iterator<LinkedList<Vertex<E>>> listIterator = paths.iterator();
+
+        while(listIterator.hasNext()) {
+			LinkedList<Vertex<E>> path = listIterator.next();
+            LinkedList<Vertex<E>> flowPath = new LinkedList<Vertex<E>>(path);
+            Iterator<Vertex<E>> pathIterator = path.iterator();
+
+            Vertex<E> prev = null, curr;
+            while(pathIterator.hasNext()) {
+                curr = pathIterator.next();
+
+                if(prev != null) {
+                    Edge<E> edge = getEdge(prev, curr);
+                    if(edge != null) {
+						edge.currFlow = 0;
+                     }
+                }
+				prev = curr;
+            }
+		}
+	}
 
     /* String getPathsToString()
      * returns a string containing all the given paths from source to sink
