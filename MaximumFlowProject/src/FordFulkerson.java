@@ -256,6 +256,7 @@ public class FordFulkerson<E> extends Graph<E> {
         maxFlow = 0;
 		if(!paths.isEmpty()) {
 			clearFlowValues();
+			paths.clear();
 		}
 		
         if(hasAugmentingPath(source, sink)) {
