@@ -596,9 +596,7 @@ public class Executable<E> {
 				openDrawGraph(0);
 				
 				System.out.println("Path from [ " + sourceOfGraph.data.toString() + " ] to [ " + sinkOfGraph.data.toString() + " ]: " + graph.hasAugmentingPath(sourceOfGraph, sinkOfGraph)); // add [] to show a better display
-				System.out.println();
-		        	graph.applyFordFulkerson(sourceOfGraph, sinkOfGraph);
-		        	System.out.println("Max flow from source to sink: " + graph.getMaxFlow()); // "from s to t" is changed to "from source to sink"
+				printMaxFlow(sourceOfGraph, sinkOfGraph);
 				//update menu notice
 				section3_MaxFlowStatus.setText("  Max flow from [" + sourceOfGraph.data + "] to [" + sinkOfGraph.data + "] = " + graph.getMaxFlow());
 			        section3_MaxFlowStatus.setForeground(Color.BLUE);
@@ -613,6 +611,7 @@ public class Executable<E> {
 	private void printMaxFlow(Vertex<String> source, Vertex<String> sink){ // E is specified to String
 		graph.applyFordFulkerson(source, sink);
 		int maxFlow = graph.getMaxFlow();
+		System.out.println(graph.getPathsToString());
 		System.out.println("Maximum Flow: " + maxFlow);
 	}
 	
