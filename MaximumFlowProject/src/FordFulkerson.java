@@ -191,6 +191,7 @@ public class FordFulkerson<E> extends Graph<E> {
      */
     public boolean hasAugmentingPath(Vertex<E> source, Vertex<E> sink) {
 		paths.clear();
+        maxFlow = 0;
         if(source == null) {
             throw new NullPointerException("ERROR: The source parameter cannot be null.");
         }
@@ -249,6 +250,7 @@ public class FordFulkerson<E> extends Graph<E> {
      * @param sink     - the sink of the flow network
      */
     public void applyFordFulkerson(Vertex<E> source, Vertex<E> sink) {
+		paths.clear();
         maxFlow = 0;
         if(hasAugmentingPath(source, sink)) {
             Iterator<LinkedList<Vertex<E>>> listIterator = paths.iterator();
